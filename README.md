@@ -38,6 +38,8 @@ layui.use(['treetable'], function () {
         treeSpid: -1,             // treetable新增参数
         treeIdName: 'd_id',       // treetable新增参数
         treePidName: 'd_pid',     // treetable新增参数
+        treeDefaultClose: true,   // treetable新增参数
+        treeLinkage: true,        // treetable新增参数
         elem: '#table1',
         url: 'json/data1.json',
         cols: [[
@@ -84,6 +86,8 @@ layui数据表格的所有参数都可以用，除此之外treetable新增的参
  treeSpid | object | 是 | 最上级的父级id
  treeIdName | string | 否 | id字段的名称
  treePidName | string | 否 | pid字段的名称
+ treeDefaultClose | boolean | 否 | 是否默认折叠
+ treeLinkage | boolean | 否 | 父级展开时是否自动展开所有子级
  
 #### treeColIndex
 树形图标（箭头和文件夹、文件的图标）显示在第几列， 索引值是cols数组的下标。
@@ -99,9 +103,19 @@ treetable是以id和pid字段来渲染树形结构的，如果你的数据没有
 pid在你的数据字段中的名称。
 
 
+#### treeDefaultClose
+
+默认是全部展开的，如果需要默认全部关闭，加上treeDefaultClose:true即可。
+
+#### treeLinkage
+
+父级展开时是否自动展开所有子级
+
+
 ### 注意事项
 - 不能使用分页功能，即使写了page:true，也会忽略该参数。
 - 不能使用排序功能，不要开启排序功能。
+- table.reload()不能实现刷新，请参考demo的刷新。
 
 ### 其他方法
 
