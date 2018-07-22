@@ -12,7 +12,7 @@ layui.define(['layer', 'table'], function (exports) {
             }
             // 获取数据
             var mData = [];
-            $.getJSON(param.url, function (res) {
+            $.getJSON(param.url, param.where, function (res) {
                 var tNodes = res.data;
                 // 补上id和pid字段
                 for (var i = 0; i < tNodes.length; i++) {
