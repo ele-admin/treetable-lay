@@ -4,10 +4,16 @@
 ## 简介
 在layui数据表格之上进行扩展实现，而非在laui的tree上进行扩展，所以可以使用数据表格的所有功能。
 
+- 演示地址：[https://whvse.gitee.io/treetable-lay/](https://whvse.gitee.io/treetable-lay/)
+
+我还写了一个树形表格，[树形表格2](https://gitee.com/whvse/treetable)，欢迎查看。
+
+- 演示地址：[https://whvse.gitee.io/treetable/](https://whvse.gitee.io/treetable/)
+
 ## 使用方法
 
 ### 引入模块
-下载treetable-lay整个文件夹，放在你的项目里面，然后使用模块加载的方式使用：
+下载module/treetable-lay整个文件夹，放在你的项目里面，然后使用模块加载的方式使用：
 ```javascript
 layui.config({
     base: 'module/'
@@ -108,3 +114,13 @@ treetable.expandAll('#table1');
  ```javascript
 treetable.foldAll('#table1');
 ```
+
+## 截图
+
+树形表格1：
+
+![树形表格1](https://ws1.sinaimg.cn/large/006a7GCKly1ftisynlfq0j30ng0g3t9b.jpg)
+
+树形表格2：
+
+![树形表格2](https://ws1.sinaimg.cn/large/006a7GCKgy1ftgdebdnsmj30ux0qktbc.jpg)
