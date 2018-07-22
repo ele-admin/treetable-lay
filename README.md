@@ -2,13 +2,12 @@
 实现layui的树形表格treeTable
 
 ## 简介
-在layui数据表格之上进行扩展实现，而非在laui的tree上进行扩展，所以可以使用数据表格的所有功能。
+在layui数据表格之上进行扩展实现。
 
 - 演示地址：[https://whvse.gitee.io/treetable-lay/](https://whvse.gitee.io/treetable-lay/)
 
-我还写了一个树形表格，[树形表格2](https://gitee.com/whvse/treetable)，欢迎查看。
 
-- 演示地址：[https://whvse.gitee.io/treetable/](https://whvse.gitee.io/treetable/)
+还有一个BOM表结构的树形表格，[树形表格2](https://gitee.com/whvse/treetable)，欢迎查看。
 
 ## 使用方法
 
@@ -101,7 +100,8 @@ pid在你的数据字段中的名称。
 
 
 ### 注意事项
-树形表格treetable不能使用分页功能，即使写了page:true，也会忽略该参数。
+- 不能使用分页功能，即使写了page:true，也会忽略该参数。
+- 不能使用排序功能，不要开启排序功能。
 
 ### 其他方法
 
