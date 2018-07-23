@@ -85,26 +85,30 @@ layui.use(['treetable'], function () {
  treePidName | string | 否 | pid字段的名称
  treeDefaultClose | boolean | 否 | 是否默认折叠
  treeLinkage | boolean | 否 | 父级展开时是否自动展开所有子级
- 
-#### 2.3.1.treeColIndex
+
+
+&emsp;**treeColIndex**
+
 &emsp;树形图标（箭头和文件夹、文件的图标）显示在第几列， 索引值是cols数组的下标。
 
-#### 2.3.2.treeSpid
+&emsp;**treeSpid**
 
 &emsp;最上级的父级id，比如你可以规定pid为0或-1的是最顶级的目录。
  
-#### 2.3.3.treeIdName
+&emsp;**treeIdName**
+
 &emsp;treetable是以id和pid字段来渲染树形结构的，如果你的数据没有id和pid字段，你可以指定id和pid字段的名称。
 
-#### 2.3.4.treePidName
+&emsp;**treePidName**
+
 &emsp;pid在你的数据字段中的名称。
 
 
-#### 2.3.5.treeDefaultClose
+&emsp;**treeDefaultClose**
 
 &emsp;默认是全部展开的，如果需要默认全部关闭，加上treeDefaultClose:true即可。
 
-#### 2.3.6.treeLinkage
+&emsp;**treeLinkage**
 
 &emsp;父级展开时是否自动展开所有子级
 
@@ -119,12 +123,12 @@ layui.use(['treetable'], function () {
 
 ### 2.5.其他方法
 
-#### 2.5.1.全部展开
+&emsp;**全部展开**
 ```javascript
 treetable.expandAll('#table1');
 ```
  
- #### 2.5.2.全部折叠
+&emsp;**全部折叠**
  ```javascript
 treetable.foldAll('#table1');
 ```
