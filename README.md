@@ -1,18 +1,18 @@
 # treetable-lay
-实现layui的树形表格treeTable
+&emsp;实现layui的树形表格treeTable
 
-## 简介
-在layui数据表格之上进行扩展实现。
+## 1.简介
+&emsp;在layui数据表格之上进行扩展实现。
 
 - 演示地址：[https://whvse.gitee.io/treetable-lay/](https://whvse.gitee.io/treetable-lay/)
 
 
-还有一个BOM表结构的树形表格，[树形表格2](https://gitee.com/whvse/treetable)，欢迎查看。
+&emsp;还有一个BOM表结构的树形表格，[树形表格2](https://gitee.com/whvse/treetable)，欢迎查看。
 
-## 使用方法
+## 2.使用方法
 
-### 引入模块
-下载module/treetable-lay整个文件夹，放在你的项目里面，然后使用模块加载的方式使用：
+### 2.1.引入模块
+&emsp;下载module/treetable-lay整个文件夹，放在你的项目里面，然后使用模块加载的方式使用：
 ```javascript
 layui.config({
     base: 'module/'
@@ -24,7 +24,7 @@ layui.config({
 });
 ```
 
-### 渲染表格
+### 2.2.渲染表格
 ```html
 <table id="table1" class="layui-table" lay-filter="table1"></table>
 
@@ -54,31 +54,28 @@ layui.use(['treetable'], function () {
 </script>
 
 ```
-数据格式：
+&emsp;数据格式，总而言之就是以id、pid的形式，不是以subMenus的形式，当然id、pid这两个字段的名称可以自定义：
 ```json
 {
   "code": 0,
   "msg": "ok",
-  "data": [
-    {
-      "d_id": 1,
+  "data": [{
+      "id": 1,
       "name": "xx",
       "sex": "male",
-      "d_pid": -1
-    },
-    {
-      "d_id": 2,
+      "pid": -1
+    },{
+      "id": 2,
       "name": "xx",
       "sex": "male",
-      "d_pid": 1
+      "pid": 1
     }
-  ],
-  "count": 2
+  ]
 }
 ```
 
-### 参数说明
-layui数据表格的所有参数都可以用，除此之外treetable新增的参数有：
+### 2.3.参数说明
+&emsp;layui数据表格的所有参数都可以用，除此之外treetable新增的参数有：
 
  参数 | 类型 | 是否必填 | 描述 |
  --- | --- | --- | ---
@@ -89,51 +86,54 @@ layui数据表格的所有参数都可以用，除此之外treetable新增的参
  treeDefaultClose | boolean | 否 | 是否默认折叠
  treeLinkage | boolean | 否 | 父级展开时是否自动展开所有子级
  
-#### treeColIndex
-树形图标（箭头和文件夹、文件的图标）显示在第几列， 索引值是cols数组的下标。
+#### 2.3.1.treeColIndex
+&emsp;树形图标（箭头和文件夹、文件的图标）显示在第几列， 索引值是cols数组的下标。
 
-#### treeSpid
+#### 2.3.2.treeSpid
 
-最上级的父级id，比如你可以规定pid为0或-1的是最顶级的目录。
+&emsp;最上级的父级id，比如你可以规定pid为0或-1的是最顶级的目录。
  
-#### treeIdName
-treetable是以id和pid字段来渲染树形结构的，如果你的数据没有id和pid字段，你可以指定id和pid字段的名称。
+#### 2.3.3.treeIdName
+&emsp;treetable是以id和pid字段来渲染树形结构的，如果你的数据没有id和pid字段，你可以指定id和pid字段的名称。
 
-#### treePidName
-pid在你的数据字段中的名称。
-
-
-#### treeDefaultClose
-
-默认是全部展开的，如果需要默认全部关闭，加上treeDefaultClose:true即可。
-
-#### treeLinkage
-
-父级展开时是否自动展开所有子级
+#### 2.3.4.treePidName
+&emsp;pid在你的数据字段中的名称。
 
 
-### 注意事项
+#### 2.3.5.treeDefaultClose
+
+&emsp;默认是全部展开的，如果需要默认全部关闭，加上treeDefaultClose:true即可。
+
+#### 2.3.6.treeLinkage
+
+&emsp;父级展开时是否自动展开所有子级
+
+
+### 2.4.注意事项
+
 - 不能使用分页功能，即使写了page:true，也会忽略该参数。
+
 - 不能使用排序功能，不要开启排序功能。
 - table.reload()不能实现刷新，请参考demo的刷新。
+- 除了文档上写的treetable.xxx的方法之外，其他数据表格的方法都使用table.xxx。
 
-### 其他方法
+### 2.5.其他方法
 
-#### 全部展开
+#### 2.5.1.全部展开
 ```javascript
 treetable.expandAll('#table1');
 ```
  
- #### 全部折叠
+ #### 2.5.2.全部折叠
  ```javascript
 treetable.foldAll('#table1');
 ```
 
-### 如何修改图标
+### 2.6.如何修改图标
 
-通过css来修改图标，content是图标的unicode字符。
+&emsp;&emsp;通过css来修改图标，content是图标的unicode字符。
 
-修改文件夹图标：
+&emsp;**修改文件夹图标：**
 ```css
 /** 未展开 */
 .treeTable-icon .layui-icon-layer:before {
@@ -146,14 +146,14 @@ treetable.foldAll('#table1');
 }
 ```
 
-修改文件图标：
+&emsp;**修改文件图标：**
 ```css
 .treeTable-icon .layui-icon-file:before {
     content: "\e621";
 }
 ```
 
-修改箭头的图标：
+&emsp;**修改箭头的图标：**
 ```css
 /** 未展开 */
 .treeTable-icon .layui-icon-triangle-d:before {
@@ -166,18 +166,18 @@ treetable.foldAll('#table1');
 }
 ```
 
-如何获取content：
+&emsp;**如何获取content：**
 
 ![](https://ws1.sinaimg.cn/large/006a7GCKgy1ftjutx5bk0j30pq0ht40b.jpg)
 
 
 
-## 截图
+## 2.7.截图
 
-树形表格1：
+&emsp;树形表格1：
 
 ![树形表格1](https://ws1.sinaimg.cn/large/006a7GCKly1ftisynlfq0j30ng0g3t9b.jpg)
 
-树形表格2：
+&emsp;树形表格2：
 
 ![树形表格2](https://ws1.sinaimg.cn/large/006a7GCKgy1ftgdebdnsmj30ux0qktbc.jpg)
