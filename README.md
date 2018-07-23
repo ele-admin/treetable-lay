@@ -129,6 +129,49 @@ treetable.expandAll('#table1');
 treetable.foldAll('#table1');
 ```
 
+### 如何修改图标
+
+通过css来修改图标，content是图标的unicode字符。
+
+修改文件夹图标：
+```css
+/** 未展开 */
+.treeTable-icon .layui-icon-layer:before {
+    content: "\e638";
+}
+
+/** 展开 */
+.treeTable-icon.open .layui-icon-layer:before {
+    content: "\e638";
+}
+```
+
+修改文件图标：
+```css
+.treeTable-icon .layui-icon-file:before {
+    content: "\e621";
+}
+```
+
+修改箭头的图标：
+```css
+/** 未展开 */
+.treeTable-icon .layui-icon-triangle-d:before {
+    content: "\e623";
+}
+
+/** 展开 */
+.treeTable-icon.open .layui-icon-triangle-d:before {
+    content: "\e625";
+}
+```
+
+如何获取content：
+
+![](https://ws1.sinaimg.cn/large/006a7GCKgy1ftjutx5bk0j30pq0ht40b.jpg)
+
+
+
 ## 截图
 
 树形表格1：
