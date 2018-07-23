@@ -150,7 +150,7 @@ layui.define(['layer', 'table'], function (exports) {
                 return false;
             }
 
-            if (!param.treeColIndex) {
+            if (!param.treeColIndex && param.treeColIndex != 0) {
                 layer.msg('参数treeColIndex不能为空', {icon: 5});
                 return false;
             }
