@@ -7,8 +7,13 @@
     <link rel="stylesheet" href="assets/common.css"/>
 </head>
 <body>
-<div class="layui-container">
-    <br><br>
+<div class="layui-container layui-text">
+    <br>
+    <h1>
+        Layui树形表格treetable -
+        <small><a href="https://gitee.com/whvse/treetable-lay" target="_blank">项目地址</a></small>
+    </h1>
+    <br>
     <div class="layui-btn-group">
         <button class="layui-btn" id="btn-expand">全部展开</button>
         <button class="layui-btn" id="btn-fold">全部折叠</button>
@@ -48,7 +53,7 @@
         var renderTable = function () {
             layer.load(2);
             treetable.render({
-                treeColIndex: 2,
+                treeColIndex: 1,
                 treeSpid: -1,
                 treeIdName: 'id',
                 treePidName: 'pid',
@@ -59,8 +64,8 @@
                 page: false,
                 cols: [[
                     {type: 'numbers'},
-                    {field: 'id', title: 'id'},
                     {field: 'name', title: 'name'},
+                    {field: 'id', title: 'id'},
                     {field: 'sex', title: 'sex'},
                     {field: 'pid', title: 'pid'},
                     {templet: '#oper-col', title: 'oper'}
