@@ -79,9 +79,11 @@ layui.define(['layer', 'table'], function (exports) {
                 param.done = function (res, curr, count) {
                     $(param.elem).next().addClass('treeTable');
                     $('.treeTable .layui-table-page').css('display', 'none');
-                    $('.treeTable .treeTable-icon').click(function () {
+                    $(param.elem).next().attr('treeLinkage', param.treeLinkage);
+                    // 绑定事件换成对body绑定
+                    /*$('.treeTable .treeTable-icon').click(function () {
                         treetable.toggleRows($(this), param.treeLinkage);
-                    });
+                    });*/
                     if (param.treeDefaultClose) {
                         treetable.foldAll(param.elem);
                     }
@@ -181,6 +183,16 @@ layui.define(['layer', 'table'], function (exports) {
     };
 
     layui.link(layui.cache.base + 'treetable-lay/treetable.css');
+
+    // 给图标列绑定事件
+    $('body').on('click', '.treeTable .treeTable-icon', function () {
+        var treeLinkage = $(this).parents('.treeTable').attr('treeLinkage');
+        if ('true' == treeLinkage) {
+            treetable.toggleRows($(this), true);
+        } else {
+            treetable.toggleRows($(this), false);
+        }
+    });
 
     exports('treetable', treetable);
 });
