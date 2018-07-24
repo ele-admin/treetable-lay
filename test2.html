@@ -4,6 +4,32 @@
     <meta charset="UTF-8">
     <title>tree-table</title>
     <link rel="stylesheet" href="assets/layui/css/layui.css">
+    <style>
+        /** 箭头未展开 */
+        #table1 + .treeTable .treeTable-icon .layui-icon-triangle-d:before {
+            content: "\e602";
+        }
+
+        /** 箭头展开 */
+        #table1 + .treeTable .treeTable-icon.open .layui-icon-triangle-d:before {
+            content: "\e61a";
+        }
+
+        /** 文件图标 */
+        #table1 + .treeTable .treeTable-icon .layui-icon-file:before {
+            content: "\e60d";
+        }
+
+        /** 文件夹未展开 */
+        #table1 + .treeTable .treeTable-icon .layui-icon-layer:before {
+            content: "\e637";
+        }
+
+        /** 文件夹展开 */
+        #table1 + .treeTable .treeTable-icon.open .layui-icon-layer:before {
+            content: "\e634";
+        }
+    </style>
 </head>
 <body>
 <div class="layui-container">
@@ -47,7 +73,7 @@
                 treeIdName: 'd_id',
                 treePidName: 'd_pid',
                 treeDefaultClose: true,
-                treeLinkage: true,
+                treeLinkage: false,
                 elem: '#table1',
                 url: 'json/data3.json',
                 page: false,
