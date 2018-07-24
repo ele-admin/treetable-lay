@@ -36,14 +36,15 @@
         base: 'module/'
     }).extend({
         treetable: 'treetable-lay/treetable'
-    }).use(['table', 'form', 'element', 'treetable'], function () {
+    }).use(['table', 'layer', 'element', 'treetable'], function () {
         var $ = layui.jquery;
         var table = layui.table;
-        var form = layui.form;
+        var layer = layui.layer;
         var element = layui.element;
         var treetable = layui.treetable;
 
         // 渲染表格
+        layer.load(2);
         var renderTable = function () {
             treetable.render({
                 treeColIndex: 2,
@@ -62,7 +63,10 @@
                     {field: 'sex', title: 'sex'},
                     {field: 'pid', title: 'pid'},
                     {templet: '#oper-col', title: 'oper'}
-                ]]
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
             });
         };
 
