@@ -36,6 +36,7 @@
         var treetable = layui.treetable;
 
         // 渲染表格
+        layer.load(2);
         treetable.render({
             treeColIndex: 1,
             treeSpid: -1,
@@ -63,7 +64,10 @@
                     }, title: '类型'
                 },
                 {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
-            ]]
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
         });
 
         $('#btn-expand').click(function () {

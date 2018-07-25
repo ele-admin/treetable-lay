@@ -54,7 +54,16 @@ layui.use(['treetable'], function () {
 </script>
 
 ```
-&emsp;数据格式，总而言之就是以id、pid的形式，不是以subMenus的形式，当然id、pid这两个字段的名称可以自定义：
+
+> 注意：<br>
+> &emsp;&emsp;可以使用url传递数据，也可以使用data传递数据，如果使用url传递数据，参数是where字段，
+> 跟layui数据表格的使用方式一致。
+
+<br/>
+
+&emsp;**数据格式**
+
+&emsp;&emsp;总而言之就是以id、pid的形式，不是以subMenus的形式，当然id、pid这两个字段的名称可以自定义：
 ```json
 {
   "code": 0,
@@ -120,6 +129,7 @@ layui.use(['treetable'], function () {
 - 不能使用排序功能，不要开启排序功能。
 - table.reload()不能实现刷新，请参考demo的刷新。
 - 除了文档上写的treetable.xxx的方法之外，其他数据表格的方法都使用table.xxx。
+- 建议删除和修改请求完后台之后请刷新（重新渲染）表格，最好不要使用obj.delete方式删除。
 
 ### 2.5.其他方法
 

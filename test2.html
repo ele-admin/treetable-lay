@@ -64,6 +64,7 @@
 
         // 渲染表格
         var renderTable = function () {
+            layer.load(2);
             treetable.render({
                 treeColIndex: 1,
                 treeSpid: "0",
@@ -81,7 +82,10 @@
                     {field: 'sex', title: 'sex'},
                     {field: 'pid', title: 'pid'},
                     {templet: '#oper-col', title: 'oper'}
-                ]]
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
             });
         };
 
