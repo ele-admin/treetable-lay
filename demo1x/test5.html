@@ -3,8 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>tree-table</title>
-    <link rel="stylesheet" href="assets/layui/css/layui.css">
-    <link rel="stylesheet" href="assets/common.css"/>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="common.css"/>
+    <style>
+        input {
+            height: 33px;
+            line-height: 33px;
+            padding: 0 7px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            margin-bottom: -2px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #009E94;
+        }
+    </style>
 </head>
 <body>
 <div class="layui-container">
@@ -15,19 +30,17 @@
         <button class="layui-btn" id="btn-expand">全部展开</button>
         <button class="layui-btn" id="btn-fold">全部折叠</button>
     </div>
+    &nbsp;&nbsp;
+    <input id="edt-search" type="text" placeholder="输入关键字" style="width: 120px;"/>&nbsp;&nbsp;
+    <button class="layui-btn" id="btn-search">&nbsp;&nbsp;搜索&nbsp;&nbsp;</button>
 
     <table id="auth-table" class="layui-table" lay-filter="auth-table"></table>
 </div>
-<!-- 操作列 -->
-<script type="text/html" id="auth-state">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
 
-<script src="assets/layui/layui.js"></script>
+<script src="layui/layui.js"></script>
 <script>
     layui.config({
-        base: 'module/'
+        base: '../module/'
     }).extend({
         treetable: 'treetable-lay/treetable'
     }).use(['table', 'treetable'], function () {
@@ -43,14 +56,13 @@
             treeIdName: 'authorityId',
             treePidName: 'parentId',
             elem: '#auth-table',
-            url: 'json/menus.json',
+            url: '../json/menus.json',
             page: false,
             cols: [[
                 {type: 'numbers'},
                 {field: 'authorityName', minWidth: 200, title: '权限名称'},
                 {field: 'authority', title: '权限标识'},
                 {field: 'menuUrl', title: '菜单url'},
-                {field: 'orderNumber', width: 80, align: 'center', title: '排序号'},
                 {
                     field: 'isMenu', width: 80, align: 'center', templet: function (d) {
                         if (d.isMenu == 1) {
@@ -62,8 +74,7 @@
                             return '<span class="layui-badge-rim">菜单</span>';
                         }
                     }, title: '类型'
-                },
-                {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
+                }
             ]],
             done: function () {
                 layer.closeAll('loading');
@@ -76,6 +87,29 @@
 
         $('#btn-fold').click(function () {
             treetable.foldAll('#auth-table');
+        });
+
+        $('#btn-search').click(function () {
+            var keyword = $('#edt-search').val();
+            var searchCount = 0;
+            $('#auth-table').next('.treeTable').find('.layui-table-body tbody tr td').each(function () {
+                $(this).css('background-color', 'transparent');
+                var text = $(this).text();
+                if (keyword != '' && text.indexOf(keyword) >= 0) {
+                    $(this).css('background-color', 'rgba(250,230,160,0.5)');
+                    if (searchCount == 0) {
+                        treetable.expandAll('#auth-table');
+                        $('html,body').stop(true);
+                        $('html,body').animate({scrollTop: $(this).offset().top - 150}, 500);
+                    }
+                    searchCount++;
+                }
+            });
+            if (keyword == '') {
+                layer.msg("请输入搜索内容", {icon: 5});
+            } else if (searchCount == 0) {
+                layer.msg("没有匹配结果", {icon: 5});
+            }
         });
     });
 </script>

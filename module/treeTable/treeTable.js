@@ -885,17 +885,22 @@ layui.define(["layer", "laytpl", "form"], function (x) {
         var z = A.checkboxFilter;
         this.checkSubCB(y.children("tbody"), false)
     };
-    s.prototype.refresh = function (C, A) {
-        var y = this.getComponents().$table;
-        var B, z;
-        if (C != undefined) {
-            B = q(this.getData(), C, this.options.tree);
-            z = y.children("tbody").children('tr[data-id="' + C + '"]')
+    s.prototype.refresh = function (D, B) {
+        var A = this.getComponents();
+        var y = A.$table;
+        var C, z;
+        if (D != undefined) {
+            C = q(this.getData(), D, this.options.tree);
+            z = y.children("tbody").children('tr[data-id="' + D + '"]')
         }
-        if (A) {
-            this.renderBodyData(A, B, z)
+        if (B) {
+            A.$tbLoading.addClass("ew-loading-float");
+            A.$tbLoading.show();
+            this.renderBodyData(B, C, z);
+            A.$tbLoading.hide();
+            A.$tbLoading.removeClass("ew-loading-float")
         } else {
-            this.renderBodyAsync(B, z)
+            this.renderBodyAsync(C, z)
         }
     };
 
@@ -1009,13 +1014,18 @@ layui.define(["layer", "laytpl", "form"], function (x) {
             var B;
             A.nextAll("tr").each(function () {
                 var C = parseInt(e(this).data("indent"));
-                if (C <= y || (B != undefined && C > B)) {
+                if (C <= y) {
                     return false
                 }
+                if (B != undefined && C > B) {
+                    return true
+                }
+                e(this).removeClass("ew-tree-tb-hide");
                 if (!e(this).hasClass("ew-tree-table-open")) {
                     B = parseInt(e(this).data("indent"))
+                } else {
+                    B = undefined
                 }
-                e(this).removeClass("ew-tree-tb-hide")
             })
         }
         d(A.parent().parent().parent().parent().parent())
