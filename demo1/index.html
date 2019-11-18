@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Layui树形表格2.x演示</title>
+    <link rel="stylesheet" href="../assets/layui/css/layui.css">
+    <style>
+        .layui-input {
+            border-color: #C9C9C9 !important;
+        }
+
+        .layui-input:focus {
+            border-color: #009688 !important;
+        }
+
+        .layui-btn-sm {
+            padding: 0 8px 0 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-container" style="max-width: 900px;">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>Layui树形表格2.x演示</legend>
+    </fieldset>
+    <div class="layui-btn-container" style="display: inline-block;">
+        <button id="btnExpandAll" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe668;</i>展开全部
+        </button>
+        <button id="btnFoldAll" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe66b;</i>折叠全部
+        </button>
+        <button id="btnExpand" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe625;</i>展开2
+        </button>
+        <button id="btnFold" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe623;</i>折叠2
+        </button>
+        <button id="btnChecked" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe605;</i>勾选1_1_2
+        </button>
+        <button id="btnRefresh" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe669;</i>刷新
+        </button>
+    </div>
+    <input class="layui-input" id="edtSearch" value="1_1_1" placeholder="输入关键字"
+           style="display: inline-block;width: 140px;height: 30px;line-height: 30px;padding: 0 5px;margin-right: 5px;"/>
+    <div class="layui-btn-container" style="display: inline-block;">
+        <button id="btnSearch" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe615;</i>搜索
+        </button>
+        <a href="async.html" class="layui-btn layui-btn-sm layui-btn-primary" style="position: relative;">
+            <i class="layui-icon">&#xe64d;</i>异步加载&nbsp;&nbsp;
+            <span class="layui-badge-dot" style="position: absolute;right: 3px;top: 3px;"></span>
+        </a>
+    </div>
+    <div class="layui-btn-container" style="display: inline-block;">
+        <a href="fixed.html" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe62d;</i>固定表头
+        </a>
+        <a href="edit.html" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe642;</i>单元格编辑
+        </a>
+        <a href="icon.html" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe639;</i>自定义图标
+        </a>
+        <a href="big.html" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe62c;</i>数据量测试
+        </a>
+    </div>
+
+    <table id="demoTreeTable1"></table>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="demoTreeTableBar1">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!-- 表格状态列 -->
+<script type="text/html" id="demoTreeTableState1">
+    <input type="checkbox" lay-filter="ckState" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|锁定" {{d.state==0?'checked':''}}/>
+</script>
+<script src="../assets/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../module/'
+    }).extend({
+        treeTable: 'treeTable/treeTable'
+    }).use(['layer', 'util', 'treeTable'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var util = layui.util;
+        var treeTable = layui.treeTable;
+        var data = [{
+            id: "1",
+            name: "xxx",
+            state: 0,
+            createTime: "2019/11/18 10:44:00",
+            children: [{
+                id: "1_1",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: [{
+                    id: "1_1_1",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }, {
+                    id: "1_1_2",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }, {
+                    id: "1_1_3",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }]
+            }, {
+                id: "1_2",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: [{
+                    id: "1_2_1",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }, {
+                    id: "1_2_2",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }, {
+                    id: "1_2_3",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }]
+            }, {
+                id: "1_3",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: []
+            }]
+        }, {
+            id: "2",
+            name: "xxx",
+            state: 0,
+            createTime: "2019/11/18 10:44:00",
+            children: [{
+                id: "2_1",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: [{
+                    id: "2_1_1",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }, {
+                    id: "2_1_2",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }, {
+                    id: "2_1_3",
+                    name: "xxx",
+                    state: 0,
+                    createTime: "2019/11/18 10:44:00",
+                    children: []
+                }]
+            }, {
+                id: "2_2",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: []
+            }, {
+                id: "2_3",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: []
+            }]
+        }, {
+            id: "3",
+            name: "xxx",
+            state: 0,
+            createTime: "2019/11/18 10:44:00",
+            children: [{
+                id: "3_1",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: []
+            }, {
+                id: "3_2",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: []
+            }, {
+                id: "3_3",
+                name: "xxx",
+                state: 0,
+                createTime: "2019/11/18 10:44:00",
+                children: []
+            }]
+        }, {
+            id: "4",
+            name: "xxx",
+            state: 0,
+            createTime: "2019/11/18 10:44:00",
+            children: []
+        }, {
+            id: "5",
+            name: "xxx",
+            state: 0,
+            createTime: "2019/11/18 10:44:00",
+            children: []
+        }];
+
+        // 渲染表格
+        var insTb = treeTable.render({
+            elem: '#demoTreeTable1',
+            data: data,
+            tree: {
+                iconIndex: 2
+            },
+            cols: [
+                {type: 'numbers'},
+                {type: 'checkbox'},
+                {field: 'id', title: 'ID'},
+                {field: 'name', title: 'name', width: 160},
+                {
+                    field: 'createTime', title: '创建时间', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, width: 180
+                },
+                {templet: '#demoTreeTableState1', title: '状态', width: 100},
+                {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
+            ],
+            style: 'margin-top:0;'
+        });
+
+        treeTable.on('tool(demoTreeTable1)', function (obj) {
+            var event = obj.event;
+            if (event == 'del') {
+                layer.msg('点击了删除', {icon: 1});
+            } else if (event == 'edit') {
+                layer.msg('点击了修改', {icon: 1});
+            }
+        });
+
+        // 全部展开
+        $('#btnExpandAll').click(function () {
+            insTb.expandAll();
+        });
+
+        // 全部折叠
+        $('#btnFoldAll').click(function () {
+            insTb.foldAll();
+        });
+
+        $('#btnExpand').click(function () {
+            insTb.expand('2');
+        });
+
+        $('#btnFold').click(function () {
+            insTb.fold('2');
+        });
+
+        $('#btnChecked').click(function () {
+            insTb.expand('1_1_2');
+            insTb.setChecked(['1_1_2']);
+        });
+
+        $('#btnRefresh').click(function () {
+            insTb.refresh(data);
+        });
+
+        $('#btnSearch').click(function () {
+            var keywords = $('#edtSearch').val();
+            if (keywords) {
+                insTb.filterData(keywords);
+            } else {
+                insTb.clearFilter();
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

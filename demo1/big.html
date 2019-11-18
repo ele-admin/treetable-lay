@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Layui树形表格2.x演示</title>
+    <link rel="stylesheet" href="../assets/layui/css/layui.css">
+</head>
+<body>
+
+<div class="layui-container" style="max-width: 900px;">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>Layui树形表格2.x演示</legend>
+    </fieldset>
+    <div class="layui-btn-container">
+        <a href="index.html" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe65c;</i>返回
+        </a>
+        <button id="btnLog" class="layui-btn layui-btn-sm layui-btn-primary"></button>
+    </div>
+
+    <table id="demoTreeTable1"></table>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="demoTreeTableBar1">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!-- 表格状态列 -->
+<script type="text/html" id="demoTreeTableState1">
+    <input type="checkbox" lay-filter="ckState" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|锁定" {{d.state==0?'checked':''}}/>
+</script>
+<script src="../assets/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../module/'
+    }).extend({
+        treeTable: 'treeTable/treeTable'
+    }).use(['layer', 'util', 'treeTable'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var util = layui.util;
+        var treeTable = layui.treeTable;
+
+        // 渲染表格
+        var insTb = treeTable.render({
+            elem: '#demoTreeTable1',
+            tree: {
+                iconIndex: 2
+            },
+            height: 'full-150',
+            cols: [
+                {type: 'numbers'},
+                {type: 'checkbox'},
+                {field: 'id', title: 'ID'},
+                {field: 'name', title: 'name', width: 160},
+                {
+                    field: 'createTime', title: '创建时间', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, width: 180
+                },
+                {templet: '#demoTreeTableState1', title: '状态', width: 100},
+                {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
+            ],
+            reqData: function (data, callback) {
+                $('#btnLog').text('请求数据...');
+                var startTime = new Date().getTime();
+                $.get('../json/list_big1.json', function (res) {
+                    $('#btnLog').text('请求数据1000条......耗时' + ((new Date().getTime() - startTime) / 1000) + 's......渲染表格......');
+                    startTime = new Date().getTime();
+                    callback(res.data);
+                    $('#btnLog').text($('#btnLog').text() + '耗时' + ((new Date().getTime() - startTime) / 1000) + 's');
+                });
+            },
+            style: 'margin-top:0;'
+        });
+
+    });
+</script>
+</body>
+</html>
