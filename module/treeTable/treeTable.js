@@ -520,7 +520,7 @@ layui.define(["layer", "laytpl", "form"], function (x) {
         B.type && (y += (' data-type="' + B.type + '"'));
         B.align && (y += (' align="' + B.align + '"'));
         B.style && (y += (' style="' + B.style + '"'));
-        y += '">';
+        y += '>';
         y += (G + "</td>");
         return y
     };
