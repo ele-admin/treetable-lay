@@ -181,7 +181,7 @@ body .layui-layer-tips i.layui-layer-TipsR {
 }
 
 .right-desc {
-    position: fixed;
+    position: absolute;
     right: 0;
     top: 0;
     width: 280px;
@@ -203,6 +203,7 @@ html, body {
     min-width: 1200px;
     overflow: auto;
     background-color: #fff;
+    position: relative;
 }
 
 @media screen and (max-width: 1480px) {
