@@ -678,7 +678,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         }
         // 请求数据
         options.reqData(d, function (res) {
-            if(options.tree.isPidData){
+            if (options.tree.isPidData) {
                 treeTb.pidToChildren(options.data, options.tree.idName, options.tree.pidName, options.tree.childName);
             }
             that.renderBodyData(res, d, $tr);  // 渲染内容
@@ -1089,14 +1089,19 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
      * @param data 非异步模式替换的数据
      */
     TreeTable.prototype.refresh = function (id, data) {
-        var $table = this.getComponents().$table;
+        var components = this.getComponents().$table;
+        var $table = components.$table;
         var d, $tr;
         if (id != undefined) {
             d = getDataById(this.getData(), id, this.options.tree);
             $tr = $table.children('tbody').children('tr[data-id="' + id + '"]');
         }
         if (data) {  // 数据模式
+            components.$tbLoading.addClass('ew-loading-float');
+            components.$tbLoading.show();
             this.renderBodyData(data, d, $tr);
+            components.$tbLoading.hide();
+            components.$tbLoading.removeClass('ew-loading-float');
         } else {  // 异步模式
             this.renderBodyAsync(d, $tr);
         }
@@ -1212,11 +1217,14 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
                 if (ind <= indent) {
                     return false;
                 }
-                if (hideInd == undefined || ind < hideInd) {
-                    $(this).removeClass('ew-tree-tb-hide');
-                    if (!$(this).hasClass('ew-tree-table-open')) {
-                        hideInd = parseInt($(this).data('indent'));
-                    }
+                if (hideInd != undefined && ind > hideInd) {
+                    return true;
+                }
+                $(this).removeClass('ew-tree-tb-hide');
+                if (!$(this).hasClass('ew-tree-table-open')) {
+                    hideInd = parseInt($(this).data('indent'));
+                } else {
+                    hideInd = undefined;
                 }
             });
         }
