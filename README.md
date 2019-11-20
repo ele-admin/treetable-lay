@@ -392,8 +392,39 @@ treeTable.pidToChildren(data, idName, pidName, childName);
 ```
 
 
+## 实例方法
+```javascript
+var insTb = treeTable.render({ });
+
+// 刷新
+insTb.reload(options);   // 重载表格
+insTb.refresh();  // 刷新(异步模式)
+insTb.refresh(id);  // 刷新指定节点下的数据
+insTb.refresh(id, data);  // 刷新指定节点下的数据为data
+
+// 复选框
+insTb.checkStatus();  // 获取选中数据
+insTb.setChecked(['1','2']);  // 设置选中数据
+insTb.removeAllChecked();  // 移除全部选中
+
+// 折叠/展开
+insTb.expand(id);  // 展开指定节点
+insTb.fold(id);  // 折叠指定节点
+insTb.expandAll();  // 展开全部
+insTb.foldAll();  // 折叠全部
+
+// 搜索
+insTb.filterData('keywords');   // 根据关键字模糊搜索
+insTb.filterData(['1','2']);   // 根据id搜索
+insTb.clearFilter();   // 清除搜索
+
+// 更新数据(只更新数据，不更新界面)
+insTb.del(id);   // 根据id删除
+insTb.update(id, fields);  // 根据id更新
+```
+
+
 ## 效果展示
 
 ![树形表格](https://s2.ax1x.com/2019/11/20/MW5QzQ.png)
-
 
