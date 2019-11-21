@@ -678,9 +678,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         // 请求数据
         options.reqData(d, function (res) {
             if (options.tree.isPidData) {
-                console.log(res)
                 res = treeTb.pidToChildren(res, options.tree.idName, options.tree.pidName, options.tree.childName);
-                console.log(res)
             }
             that.renderBodyData(res, d, $tr);  // 渲染内容
             // 移除loading
