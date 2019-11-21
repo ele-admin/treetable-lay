@@ -780,6 +780,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             if (checked) {
                 $cb.data('indeterminate', 'false');
                 $cb.next('.layui-form-checkbox').addClass('layui-form-checked');
+                $cb.next('.layui-form-checkbox').removeClass('ew-form-indeterminate');
             } else {
                 $cb.data('indeterminate', 'false');
                 $cb.next('.layui-form-checkbox').removeClass('layui-form-checked ew-form-indeterminate');
