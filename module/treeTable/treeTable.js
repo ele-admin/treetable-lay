@@ -122,13 +122,6 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var $tbEmpty = components.$tbEmpty;  // 空视图
         var $tbLoading = components.$tbLoading;  // 空视图
 
-        // 处理数据
-        if (options.tree.isPidData) {  // pid形式数据
-            treeTb.pidToChildren(options.data, options.tree.idName, options.tree.pidName, options.tree.childName);
-        } else {  // children形式数据
-            addPidField(options.data, options.tree);
-        }
-
         // 基础参数设置
         options.width && $view.css('width', options.width);
         options.skin && $table.attr('lay-skin', options.skin);
@@ -180,6 +173,12 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             this.renderBodyAsync();
         } else {  // 一次性渲染
             if (options.data && options.data.length > 0) {
+                // 处理数据
+                if (options.tree.isPidData) {  // pid形式数据
+                    treeTb.pidToChildren(options.data, options.tree.idName, options.tree.pidName, options.tree.childName);
+                } else {  // children形式数据
+                    addPidField(options.data, options.tree);
+                }
                 $table.children('tbody').html(this.renderBody(options.data));
                 $tbLoading.hide();
                 this.renderNumberCol();  // 渲染序号列
@@ -679,7 +678,9 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         // 请求数据
         options.reqData(d, function (res) {
             if (options.tree.isPidData) {
-                treeTb.pidToChildren(options.data, options.tree.idName, options.tree.pidName, options.tree.childName);
+                console.log(res)
+                res = treeTb.pidToChildren(res, options.tree.idName, options.tree.pidName, options.tree.childName);
+                console.log(res)
             }
             that.renderBodyData(res, d, $tr);  // 渲染内容
             // 移除loading
@@ -1315,17 +1316,17 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
     }
 
     /** 获取顶级的pId */
-    function getPids(list) {
+    function getPids(list, idName, pidName) {
         var pids = [];
         for (var i = 0; i < list.length; i++) {
             var hasPid = false;
             for (var j = 0; j < list.length; j++) {
-                if (i != j && list[j].id == list[i].pId) {
+                if (i != j && list[j][idName] == list[i][pidName]) {
                     hasPid = true;
                 }
             }
             if (!hasPid) {
-                pids.push(list[i].pId);
+                pids.push(list[i][pidName]);
             }
         }
         return pids;
@@ -1374,7 +1375,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             childName || (childName = 'children');
             var newList = [];
             for (var i = 0; i < data.length; i++) {
-                (pId == undefined) && (pId = getPids(data));
+                (pId == undefined) && (pId = getPids(data, idName, pidName));
                 if (pidEquals(data[i][pidName], pId)) {
                     var children = this.pidToChildren(data, idName, pidName, childName, data[i][idName]);
                     (children.length > 0) && (data[i][childName] = children);
