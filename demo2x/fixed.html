@@ -71,7 +71,7 @@
             name: "xxx",
             state: 0,
             createTime: "2019/11/18 10:44:00",
-            open: false,
+            open: true,
             children: [{
                 id: "1_1",
                 name: "xxx",
@@ -132,7 +132,7 @@
             name: "xxx",
             state: 0,
             createTime: "2019/11/18 10:44:00",
-            open: false,
+            open: true,
             children: [{
                 id: "2_1",
                 name: "xxx",
@@ -175,7 +175,7 @@
             name: "xxx",
             state: 0,
             createTime: "2019/11/18 10:44:00",
-            open: false,
+            open: true,
             children: [{
                 id: "3_1",
                 name: "xxx",
@@ -216,11 +216,12 @@
             tree: {
                 iconIndex: 2
             },
+            width:'600px',
             height: '350px',
             cols: [
                 {type: 'numbers'},
                 {type: 'checkbox'},
-                {field: 'id', title: 'ID'},
+                {field: 'id', title: 'ID',width:160},
                 {field: 'name', title: 'name', width: 160},
                 {
                     field: 'createTime', title: '创建时间', templet: function (d) {

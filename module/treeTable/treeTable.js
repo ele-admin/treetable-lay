@@ -58,7 +58,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         };
         // 默认提示文本
         var textDefaultOption = {
-            none: '<div style="padding: 15px 0;">暂无数据</div>'  // 空文本提示文字
+            none: '<div style="padding: 18px 0;">暂无数据</div>'  // 空文本提示文字
         };
         this.options = $.extend(defaultOption, options);
         this.options.tree = $.extend(treeDefaultOption, options.tree);
@@ -123,7 +123,6 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var $tbLoading = components.$tbLoading;  // 空视图
 
         // 基础参数设置
-        options.width && $view.css('width', options.width);
         options.skin && $table.attr('lay-skin', options.skin);
         options.size && $table.attr('lay-size', options.size);
         options.even && $table.attr('lay-even', options.even);
@@ -134,20 +133,25 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             $view.find('.ew-tree-table-border.right').css('width', '1px');
         }
 
-        // 计算表格宽度
-        var tbWidth = options.getTbWidth();
+        // 固定宽度
+        /*var tbWidth = options.getTbWidth();
         $tbBox.css('min-width', tbWidth.minWidth);
         $headTb.parent().css('min-width', tbWidth.minWidth);
         if (tbWidth.setWidth) {
             $tbBox.css('width', tbWidth.width);
             $headTb.parent().css('width', tbWidth.width);
+        }*/
+        if (options.width) {
+            $view.css('width', options.width);
+            $headTb.parent().css('width', options.width);
+            $tbBox.css('width', options.width);
         }
 
         // 渲染表结构及表头
         var colgroupHtmlStr = options.getColgroup();
-        var headHtmlStr = colgroupHtmlStr + '<thead>' + options.getThead() + '</thead>';
+        var headHtmlStr = '<thead>' + options.getThead() + '</thead>';
         if (options.height) {  // 固定表头
-            $table.html(colgroupHtmlStr + '<tbody></tbody>');
+            $table.html('<tbody></tbody>');
             $headTb.html(headHtmlStr);
             $table.css('margin-top', '-1px');
             if (options.height.indexOf('full-') == 0) {  // 差值高度
@@ -166,6 +170,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         } else {
             $table.html(headHtmlStr + '<tbody></tbody>');
         }
+        $tbBox.after(colgroupHtmlStr);
         form.render('checkbox', tbFilter);  // 渲染表头的表单元素
 
         // 渲染数据
@@ -175,7 +180,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             if (options.data && options.data.length > 0) {
                 // 处理数据
                 if (options.tree.isPidData) {  // pid形式数据
-                    treeTb.pidToChildren(options.data, options.tree.idName, options.tree.pidName, options.tree.childName);
+                    options.data = treeTb.pidToChildren(options.data, options.tree.idName, options.tree.pidName, options.tree.childName);
                 } else {  // children形式数据
                     addPidField(options.data, options.tree);
                 }
@@ -476,6 +481,15 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             $(this).data('move', 'false');
         });*/
 
+        // 同步滚动条
+        components.$tbBox.on('scroll', function () {
+            var $this = $(this);
+            var scrollLeft = $this.scrollLeft();
+            var scrollTop = $this.scrollTop();
+            components.$headTb.parent().scrollLeft(scrollLeft);
+            // $headGroup.scrollTop(scrollTop);
+        });
+
     };
 
     /** 获取各个组件 */
@@ -650,7 +664,8 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         col.align && (htmlStr += (' align="' + col.align + '"'));  // 对齐方式
         col.style && (htmlStr += (' style="' + col.style + '"'));  // 单元格样式
         htmlStr += '>';
-        htmlStr += (tdStr + '</td>');
+        htmlStr += ('<div class="ew-tree-table-cell ew-treetb-cell-' + index + '">');
+        htmlStr += (tdStr + '</div></td>');
         return htmlStr;
     };
 
@@ -674,6 +689,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
                 $tbLoading.addClass('ew-loading-float');
             }
             $tbLoading.show();
+            $tbEmpty.hide();
         }
         // 请求数据
         options.reqData(d, function (res) {
@@ -688,10 +704,12 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             } else {
                 $tbLoading.hide();
                 $tbLoading.removeClass('ew-loading-float');
-            }
-            // 是否为空
-            if ((!res || res.length == 0) && !$tr) {
-                $tbEmpty.show();
+                // 是否为空
+                if (!res || res.length == 0) {
+                    $tbEmpty.show();
+                } else {
+                    $tbEmpty.hide();
+                }
             }
         });
     };
@@ -866,7 +884,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var components = this.getComponents();
         var $tbody = components.$table.children('tbody');
         $tbody.children('tr').each(function (index) {
-            $(this).children('td').children('.ew-tree-table-numbers').text(index + 1);
+            $(this).children('td').find('.ew-tree-table-numbers').text(index + 1);
         });
     };
 
@@ -1089,7 +1107,11 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
      * @param data 非异步模式替换的数据
      */
     TreeTable.prototype.refresh = function (id, data) {
-        var components = this.getComponents().$table;
+        if (isClass(id) == 'Array') {
+            data = id;
+            id = undefined;
+        }
+        var components = this.getComponents();
         var $table = components.$table;
         var d, $tr;
         if (id != undefined) {
@@ -1102,6 +1124,11 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             this.renderBodyData(data, d, $tr);
             components.$tbLoading.hide();
             components.$tbLoading.removeClass('ew-loading-float');
+            if (data && data.length > 0) {
+                components.$tbEmpty.hide();
+            } else {
+                components.$tbEmpty.show();
+            }
         } else {  // 异步模式
             this.renderBodyAsync(d, $tr);
         }
@@ -1115,6 +1142,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             htmlStr += '<td data-index="' + i + '" ';
             col.align && (htmlStr += ' align="' + col.align + '"');  // 对齐方式
             htmlStr += ' >';
+            htmlStr += ('<div class="ew-tree-table-cell ew-treetb-cell-' + i + '">');
             // 标题
             if (col.type == 'checkbox') {
                 htmlStr += options.getAllChooseBox();
@@ -1125,7 +1153,11 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             if (!col.unresize && 'checkbox' != col.type && 'radio' != col.type && 'numbers' != col.type && 'space' != col.type) {
                 htmlStr += '<span class="ew-tb-resize"></span>';
             }
+            htmlStr += '</div>';
             htmlStr += '</td>';
+        }
+        if (options.height) {
+            htmlStr += '<td><div class="ew-tree-table-patch"></div></td>';
         }
         htmlStr += '</tr>';
         return htmlStr;
@@ -1133,7 +1165,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
 
     /** 生成colgroup */
     function getColgroup(options) {
-        var htmlStr = '<colgroup>';
+        /*var htmlStr = '<colgroup>';
         for (var i = 0; i < options.cols.length; i++) {
             var col = options.cols[i];
             htmlStr += '<col ';
@@ -1149,7 +1181,24 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             }
             htmlStr += ' />';
         }
-        htmlStr += '</colgroup>';
+        htmlStr += '</colgroup>';*/
+        var htmlStr = '<style>';
+        for (var i = 0; i < options.cols.length; i++) {
+            var col = options.cols[i];
+            htmlStr += ('.ew-tree-table-cell.ew-treetb-cell-' + i + ' {');
+            // 设置宽度
+            if (col.width) {
+                htmlStr += 'width: ' + col.width + 'px;'
+            } else if (col.type == 'space') {  // 空列
+                htmlStr += 'width: 15px;'
+            } else if (col.type == 'numbers') {  // 序号列
+                htmlStr += 'width: 40px;'
+            } else if (col.type == 'checkbox' || col.type == 'radio') {  // 复/单选框列
+                htmlStr += 'width: 48px;'
+            }
+            htmlStr += '}';
+        }
+        htmlStr += '</style>';
         return htmlStr;
     }
 
@@ -1231,18 +1280,19 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         updateFixedTbHead($tr.parent().parent().parent().parent().parent());
     }
 
-    /** 固定表头减去滚动条 */
+    /** 固定表头滚动条补丁 */
     function updateFixedTbHead($view) {
         var $group = $view.children('.ew-tree-table-group');
+        var $patch = $group.children('.ew-tree-table-head').find('.ew-tree-table-patch');
         var $tbBox = $group.children('.ew-tree-table-box');
         var sWidth = $tbBox.width() - $tbBox.prop('clientWidth');
         if (sWidth > 0) {
             if (!(device.ie && device.ie < 9)) {
                 sWidth = sWidth - 0.48;
             }
-            $group.children('.ew-tree-table-head').css('padding-right', sWidth);
+            $patch.css('width', sWidth);
         } else {
-            $group.children('.ew-tree-table-head').css('padding-right', 0);
+            $patch.css('width', 0);
         }
     }
 
