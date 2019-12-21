@@ -6,6 +6,27 @@
 
 .ew-tree-table .layui-table {
     margin: 0;
+    table-layout: fixed;
+}
+
+/* 表格容器 */
+.ew-tree-table-group {
+    position: relative;
+}
+
+/* 主体表格容器 */
+.ew-tree-table > .ew-tree-table-group > .ew-tree-table-box {
+    overflow: auto;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* 表头表格容器 */
+.ew-tree-table > .ew-tree-table-group > .ew-tree-table-head {
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    background-color: #f2f2f2;
 }
 
 /* 容器加边框 */
@@ -42,42 +63,18 @@
     height: 0.52px;
 }
 
-/* 整体容器 */
-.ew-tree-table-group {
-    position: relative;
-}
-
-/* 表格容器 */
-.ew-tree-table > .ew-tree-table-group > .ew-tree-table-box {
-    overflow: auto;
-    position: relative;
-    box-sizing: border-box;
-}
-
-/* 表头容器 */
-.ew-tree-table > .ew-tree-table-group > .ew-tree-table-head {
-    overflow: hidden;
-    position: relative;
-    box-sizing: border-box;
-    background-color: #f2f2f2;
-}
-
-.ew-tree-table > .ew-tree-table-group > .ew-tree-table-box > .layui-table, .ew-tree-table > .ew-tree-table-group > .ew-tree-table-head > .layui-table {
-    table-layout: fixed;
-}
-
 /* table的loading */
-.ew-tree-table > .ew-tree-table-group > .ew-tree-table-box > .ew-tree-table-loading {
+.ew-tree-table .ew-tree-table-box > .ew-tree-table-loading {
     padding: 10px 0;
     text-align: center;
 }
 
-.ew-tree-table > .ew-tree-table-group > .ew-tree-table-box > .ew-tree-table-loading > i {
+.ew-tree-table .ew-tree-table-box > .ew-tree-table-loading > i {
     color: #999;
     font-size: 30px;
 }
 
-.ew-tree-table > .ew-tree-table-group > .ew-tree-table-box > .ew-tree-table-loading.ew-loading-float {
+.ew-tree-table .ew-tree-table-box > .ew-tree-table-loading.ew-loading-float {
     position: absolute;
     left: 0;
     right: 0;
@@ -85,7 +82,7 @@
 }
 
 /* 空数据提示 */
-.ew-tree-table > .ew-tree-table-group > .ew-tree-table-box > .ew-tree-table-empty {
+.ew-tree-table .ew-tree-table-box > .ew-tree-table-empty {
     color: #666;
     font-size: 14px;
     text-align: center;
@@ -142,6 +139,7 @@
     margin-left: 5px;
 }
 
+/* tr加载中禁用事件 */
 .ew-tree-table tr.ew-tree-table-loading > * {
     pointer-events: none !important;
 }
@@ -205,6 +203,13 @@
     background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTc0MDYyNTE1MDUxIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEzNTE4IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwvc3R5bGU+PC9kZWZzPjxwYXRoIGQ9Ik03NDEuMyAxNjEuNmgtNDIuNGMtMTAuNSAwLTE5LjEgOC42LTE5LjEgMTkuMXM4LjYgMTkuMSAxOS4xIDE5LjFoNDIuNGM0MiAwIDc2LjIgMzQuMiA3Ni4yIDc2LjN2NDc3LjRjMCA0Mi4xLTM0LjMgNzYuMy03Ni40IDc2LjNIMjgyLjljLTQyLjEgMC03Ni4zLTM0LjItNzYuMy03Ni4zVjI3Ni4xYzAtNDIuMSAzNC4yLTc2LjMgNzYuMy03Ni4zaDQ0LjljMTAuNSAwIDE5LjEtOC42IDE5LjEtMTkuMXMtOC42LTE5LjEtMTkuMS0xOS4xaC00NC45Yy02My4xIDAtMTE0LjUgNTEuNC0xMTQuNSAxMTQuNXY0NzcuNGMwIDYzLjEgNTEuNCAxMTQuNSAxMTQuNSAxMTQuNWg0NTguM2M2My4xIDAgMTE0LjUtNTEuNCAxMTQuNS0xMTQuNVYyNzYuMWMtMC4xLTYzLjEtNTEuNC0xMTQuNS0xMTQuNC0xMTQuNXoiIHAtaWQ9IjEzNTE5IiBmaWxsPSIjRkZBNTAwIj48L3BhdGg+PHBhdGggZD0iTTY4MC42IDUwNS4zSDM0My40Yy0xMi4zIDAtMjIuMyA4LjYtMjIuMyAxOS4xczEwIDE5LjEgMjIuMyAxOS4xaDMzNy4yYzEyLjMgMCAyMi4zLTguNiAyMi4zLTE5LjEgMC0xMC42LTEwLTE5LjEtMjIuMy0xOS4xek00MzkuMyAyMTMuM2gxNDQuNmMxOSAwIDM0LjQtMTIuOCAzNC40LTI4LjZzLTE1LjQtMjguNi0zNC40LTI4LjZINDM5LjNjLTE5IDAtMzQuNCAxMi44LTM0LjQgMjguNi0wLjEgMTUuNyAxNS4zIDI4LjYgMzQuNCAyOC42ek02ODAuNiA2NThIMzQzLjRjLTEyLjMgMC0yMi4zIDguNS0yMi4zIDE5LjEgMCAxMC41IDEwIDE5LjEgMjIuMyAxOS4xaDMzNy4yYzEyLjMgMCAyMi4zLTguNiAyMi4zLTE5LjEgMC0xMC42LTEwLTE5LjEtMjIuMy0xOS4xek02ODAuNiAzNTIuNUgzNDMuNGMtMTIuMyAwLTIyLjMgOC42LTIyLjMgMTkuMXMxMCAxOS4xIDIyLjMgMTkuMWgzMzcuMmMxMi4zIDAgMjIuMy04LjYgMjIuMy0xOS4xIDAtMTAuNS0xMC0xOS4xLTIyLjMtMTkuMXoiIHAtaWQ9IjEzNTIwIiBmaWxsPSIjRkZBNTAwIj48L3BhdGg+PC9zdmc+")
 }
 
+/* 序号列调整 */
+.ew-tree-table td[data-type="numbers"] {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+}
+
 /* 单元格内表单元素样式调整 */
 .ew-tree-table .layui-form-switch {
     margin-top: 0;
@@ -214,7 +219,7 @@
     margin: 0;
 }
 
-/* checkbox列调整 */
+/* checkbox和radio列调整 */
 .ew-tree-table-checkbox + .layui-form-checkbox {
     padding: 0;
 }
@@ -241,7 +246,7 @@
     line-height: 20px;
 }
 
-/* 复选框半选状态 */
+/* checkbox半选状态 */
 .ew-tree-table .layui-form-checked.ew-form-indeterminate > .layui-icon:before {
     content: "";
     width: 9px;
@@ -278,6 +283,11 @@
     border-color: #FF5722 !important;
 }
 
+/* 搜索数据隐藏行 */
+.ew-tree-table tr.ew-tree-table-filter-hide {
+    display: none !important;
+}
+
 /* 列宽拖拽调整 */
 /*.ew-tree-table .ew-tb-resize {
     position: absolute;
@@ -287,15 +297,3 @@
     width: 10px;
     cursor: col-resize;
 }*/
-
-/* 序号列调整 */
-.ew-tree-table td[data-type="numbers"] {
-    padding-left: 0;
-    padding-right: 0;
-    text-align: center;
-}
-
-/* 搜索数据隐藏行 */
-.ew-tree-table tr.ew-tree-table-filter-hide {
-    display: none !important;
-}

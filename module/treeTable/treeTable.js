@@ -9,7 +9,14 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
     var form = layui.form;
     var device = layui.device();
     var MOD_NAME = 'treeTable';  // 绑定事件的模块名
-    layui.link(layui.cache.base + 'treeTable/treeTable.css');
+    // 改为同步加载css，避免滚动条补丁首次进入无效
+    $.ajax({
+        url: layui.cache.base + 'treeTable/treeTable.css',
+        async: false,
+        success: function (res) {
+            $('head').append('<style id="ew-tree-table-css">' + res + '</style>');
+        }
+    });
 
     /** TreeTable类构造方法 */
     var TreeTable = function (options) {
@@ -95,8 +102,8 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var viewHtml = '<div class="layui-form ew-tree-table" style="' + (options.style || '') + '">';
         viewHtml += '      <div class="ew-tree-table-group">';
         viewHtml += '         <div class="ew-tree-table-head">';
-        viewHtml += '            <div class="ew-tree-table-border bottom"></div>';
         viewHtml += '            <table class="layui-table"></table>';
+        viewHtml += '            <div class="ew-tree-table-border bottom"></div>';
         viewHtml += '         </div>';
         viewHtml += '         <div class="ew-tree-table-box">';
         viewHtml += '            <table class="layui-table"></table>';
@@ -104,10 +111,8 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         viewHtml += '            <div class="ew-tree-table-empty" style="display: none;">' + (options.text.none || '') + '</div>';
         viewHtml += '         </div>';
         viewHtml += '      </div>';
-        viewHtml += '      <div class="ew-tree-table-border top"></div>';
-        viewHtml += '      <div class="ew-tree-table-border left"></div>';
-        viewHtml += '      <div class="ew-tree-table-border right"></div>';
-        viewHtml += '      <div class="ew-tree-table-border bottom"></div>';
+        viewHtml += '      <div class="ew-tree-table-border top"></div><div class="ew-tree-table-border left"></div>';
+        viewHtml += '      <div class="ew-tree-table-border right"></div><div class="ew-tree-table-border bottom"></div>';
         viewHtml += '   </div>';
         $elem.after(viewHtml);
 
@@ -134,17 +139,16 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         }
 
         // 固定宽度
-        /*var tbWidth = options.getTbWidth();
-        $tbBox.css('min-width', tbWidth.minWidth);
-        $headTb.parent().css('min-width', tbWidth.minWidth);
-        if (tbWidth.setWidth) {
-            $tbBox.css('width', tbWidth.width);
-            $headTb.parent().css('width', tbWidth.width);
-        }*/
         if (options.width) {
             $view.css('width', options.width);
             $headTb.parent().css('width', options.width);
             $tbBox.css('width', options.width);
+        }
+        // col最小宽度
+        var tbWidth = options.getTbWidth();
+        if (tbWidth.needSet) {
+            $table.css('min-width', tbWidth.minWidth);
+            $headTb.css('min-width', tbWidth.minWidth);
         }
 
         // 渲染表结构及表头
@@ -451,6 +455,15 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             }
         });
 
+        // 同步滚动条
+        components.$tbBox.on('scroll', function () {
+            var $this = $(this);
+            var scrollLeft = $this.scrollLeft();
+            var scrollTop = $this.scrollTop();
+            components.$headTb.parent().scrollLeft(scrollLeft);
+            // $headGroup.scrollTop(scrollTop);
+        });
+
         // 列宽拖拽调整
         /*$view.off('mousedown.resize').on('mousedown.resize', '.ew-tb-resize', function (e) {
             layui.stope(e);
@@ -479,15 +492,6 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             layui.stope(e);
             $(this).data('move', 'false');
         });*/
-
-        // 同步滚动条
-        components.$tbBox.on('scroll', function () {
-            var $this = $(this);
-            var scrollLeft = $this.scrollLeft();
-            var scrollTop = $this.scrollTop();
-            components.$headTb.parent().scrollLeft(scrollLeft);
-            // $headGroup.scrollTop(scrollTop);
-        });
 
     };
 
@@ -1152,9 +1156,6 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             }
             htmlStr += '</td>';
         }
-        if (options.height) {
-            htmlStr += '<td class="ew-tree-table-patch" width="18px"></td>';
-        }
         htmlStr += '</tr>';
         return htmlStr;
     }
@@ -1183,30 +1184,27 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
 
     /** 计算table宽度 */
     function getTbWidth(options) {
-        var minWidth = 0, width = 0, setWidth = true;
+        var minWidth = 0, needSet = false;
         for (var i = 0; i < options.cols.length; i++) {
             var col = options.cols[i];
             if (col.type == 'space') {  // 空列
                 minWidth += 15;
-                width += 15;
             } else if (col.type == 'numbers') {  // 序号列
                 minWidth += 40;
-                width += 40;
             } else if (col.type == 'checkbox' || col.type == 'radio') {  // 复/单选框列
                 minWidth += 48;
-                width += 48;
             } else if (!col.width || /\d+%$/.test(col.width)) {  // 列未固定宽度
-                setWidth = false;
-                if (this.cellMinWidth != undefined) {
+                needSet = true;
+                if (col.minWidth) {
+                    minWidth += col.minWidth;
+                } else if (options.cellMinWidth) {
                     minWidth += options.cellMinWidth;
-                    width += options.cellMinWidth;
                 }
             } else {  // 列固定宽度
                 minWidth += col.width;
-                width += col.width;
             }
         }
-        return {minWidth: minWidth, width: width, setWidth: setWidth};
+        return {minWidth: minWidth, needSet: needSet};
     }
 
     /** 生成全选按钮 */
@@ -1262,16 +1260,13 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
     /** 固定表头滚动条补丁 */
     function updateFixedTbHead($view) {
         var $group = $view.children('.ew-tree-table-group');
-        var $patch = $group.children('.ew-tree-table-head').find('.ew-tree-table-patch');
+        var $headBox = $group.children('.ew-tree-table-head');
         var $tbBox = $group.children('.ew-tree-table-box');
         var sWidth = $tbBox.width() - $tbBox.prop('clientWidth');
         if (sWidth > 0) {
-            if (!(device.ie && device.ie < 9)) {
-                sWidth = sWidth - 0.48;
-            }
-            $patch.attr('width', sWidth + 'px');
+            $headBox.css('border-right', sWidth + 'px solid #f2f2f2');
         } else {
-            $patch.attr('width', '0px');
+            $headBox.css('border-right', 'none');
         }
     }
 
