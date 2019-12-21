@@ -1036,7 +1036,8 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
     };
 
     /** 获取当前选中行 */
-    TreeTable.prototype.checkStatus = function () {
+    TreeTable.prototype.checkStatus = function (needIndeterminate) {
+        (needIndeterminate == undefined) && (needIndeterminate = true);
         var that = this;
         var components = this.getComponents();
         var $table = components.$table;
@@ -1054,9 +1055,13 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         } else {  // 获取复选框数据
             $table.find('input[name="' + checkboxFilter + '"]:checked').each(function () {
                 var id = $(this).val();
-                var d = getDataById(that.getData(), id, that.options.tree);
-                if (d) {
-                    list.push(d);
+                var isIndeterminate = $(this).next('.layui-form-checkbox').hasClass('ew-form-indeterminate');
+                if (needIndeterminate || !isIndeterminate) {
+                    var d = getDataById(that.getData(), id, that.options.tree);
+                    if (d) {
+                        d.isIndeterminate = isIndeterminate;
+                        list.push(d);
+                    }
                 }
             });
         }

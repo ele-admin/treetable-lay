@@ -32,10 +32,10 @@ Layui的树形表格treeTable，支持异步加载(懒加载)、复选框联动�
 
 
 ## 导入模块
-把`/module/treeTable`整个目录放在你的项目里面，正确配置模块路径即可使用：
+把`/2.x/treeTable`整个目录放在你的项目里面，正确配置模块路径即可使用：
 ```javascript
 layui.config({
-    base: '/module/'
+    base: '/'
 }).extend({
     treeTable: 'treeTable/treeTable'
 }).use(['treeTable'], function () {
@@ -43,7 +43,6 @@ layui.config({
 
 });
 ```
-`module`目录下的`treeTable`是最新的版本，`treetable-lay`是1.x的版本，只需要引入最新的版本即可，
 如果不会引用先到layui官网查看模块规范介绍。
 
 
@@ -227,7 +226,7 @@ openName | String | 设定是否默认展开的字段名 | 默认'open'
 ```javascript
 treeTable.render({
     text: {
-        none: '<div style="padding: 15px 0;">哎呀，一条数据都没有~</div>'
+        none: '<div style="padding: 18px 0;">哎呀，一条数据都没有~</div>'
     }
 });
 ```
@@ -419,11 +418,13 @@ var insTb = treeTable.render({ });
 // 刷新
 insTb.reload(options);   // 重载表格
 insTb.refresh();  // 刷新(异步模式)
-insTb.refresh(id);  // 刷新指定节点下的数据
-insTb.refresh(id, data);  // 刷新指定节点下的数据为data
+insTb.refresh(data);  // 刷新(数据模式)
+insTb.refresh(id);  // 刷新指定节点下的数据(异步模式)
+insTb.refresh(id, data);  // 刷新指定节点下的数据(数据模式)
 
 // 复选框
-insTb.checkStatus();  // 获取选中数据
+insTb.checkStatus();  // 获取选中数据(是否是半选会有一个isIndeterminate字段标识)
+insTb.checkStatus(false);  // 获取选中数据，不要半选状态
 insTb.setChecked(['1','2']);  // 设置选中数据
 insTb.removeAllChecked();  // 移除全部选中
 
