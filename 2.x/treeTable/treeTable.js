@@ -146,7 +146,10 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         }
         // col最小宽度
         var tbWidth = options.getTbWidth();
-        if (tbWidth.needSet) {
+        if (tbWidth.setWidth) {
+            $table.css('width', tbWidth.minWidth);
+            $headTb.css('width', tbWidth.minWidth);
+        } else {
             $table.css('min-width', tbWidth.minWidth);
             $headTb.css('min-width', tbWidth.minWidth);
         }
@@ -1189,7 +1192,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
 
     /** 计算table宽度 */
     function getTbWidth(options) {
-        var minWidth = 0, needSet = false;
+        var minWidth = 0, setWidth = true;
         for (var i = 0; i < options.cols.length; i++) {
             var col = options.cols[i];
             if (col.type == 'space') {  // 空列
@@ -1199,7 +1202,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             } else if (col.type == 'checkbox' || col.type == 'radio') {  // 复/单选框列
                 minWidth += 48;
             } else if (!col.width || /\d+%$/.test(col.width)) {  // 列未固定宽度
-                needSet = true;
+                setWidth = false;
                 if (col.minWidth) {
                     minWidth += col.minWidth;
                 } else if (options.cellMinWidth) {
@@ -1209,7 +1212,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
                 minWidth += col.width;
             }
         }
-        return {minWidth: minWidth, needSet: needSet};
+        return {minWidth: minWidth, setWidth: setWidth};
     }
 
     /** 生成全选按钮 */
