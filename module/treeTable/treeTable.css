@@ -299,15 +299,3 @@
 .ew-tree-table tr.ew-tree-table-filter-hide {
     display: none !important;
 }
-
-/* 单元格样式 */
-.ew-tree-table .ew-tree-table-group td, .ew-tree-table .ew-tree-table-group th {
-    padding-left: 0;
-    padding-right: 0;
-}
-
-.ew-tree-table .ew-tree-table-group .ew-tree-table-cell {
-    padding-left: 15px;
-    padding-right: 15px;
-    box-sizing: border-box;
-}

@@ -149,9 +149,9 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
 
         // 渲染表结构及表头
         var colgroupHtmlStr = options.getColgroup();
-        var headHtmlStr = '<thead>' + options.getThead() + '</thead>';
+        var headHtmlStr = colgroupHtmlStr + '<thead>' + options.getThead() + '</thead>';
         if (options.height) {  // 固定表头
-            $table.html('<tbody></tbody>');
+            $table.html(colgroupHtmlStr + '<tbody></tbody>');
             $headTb.html(headHtmlStr);
             $table.css('margin-top', '-1px');
             if (options.height.indexOf('full-') == 0) {  // 差值高度
@@ -170,7 +170,6 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         } else {
             $table.html(headHtmlStr + '<tbody></tbody>');
         }
-        $tbBox.after(colgroupHtmlStr);
         form.render('checkbox', tbFilter);  // 渲染表头的表单元素
 
         // 渲染数据
@@ -664,8 +663,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         col.align && (htmlStr += (' align="' + col.align + '"'));  // 对齐方式
         col.style && (htmlStr += (' style="' + col.style + '"'));  // 单元格样式
         htmlStr += '>';
-        htmlStr += ('<div class="ew-tree-table-cell ew-treetb-cell-' + index + '">');
-        htmlStr += (tdStr + '</div></td>');
+        htmlStr += (tdStr + '</td>');
         return htmlStr;
     };
 
@@ -1142,7 +1140,6 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             htmlStr += '<td data-index="' + i + '" ';
             col.align && (htmlStr += ' align="' + col.align + '"');  // 对齐方式
             htmlStr += ' >';
-            htmlStr += ('<div class="ew-tree-table-cell ew-treetb-cell-' + i + '">');
             // 标题
             if (col.type == 'checkbox') {
                 htmlStr += options.getAllChooseBox();
@@ -1153,11 +1150,10 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             if (!col.unresize && 'checkbox' != col.type && 'radio' != col.type && 'numbers' != col.type && 'space' != col.type) {
                 htmlStr += '<span class="ew-tb-resize"></span>';
             }
-            htmlStr += '</div>';
             htmlStr += '</td>';
         }
         if (options.height) {
-            htmlStr += '<td><div class="ew-tree-table-patch"></div></td>';
+            htmlStr += '<td class="ew-tree-table-patch" width="18px"></td>';
         }
         htmlStr += '</tr>';
         return htmlStr;
@@ -1165,7 +1161,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
 
     /** 生成colgroup */
     function getColgroup(options) {
-        /*var htmlStr = '<colgroup>';
+        var htmlStr = '<colgroup>';
         for (var i = 0; i < options.cols.length; i++) {
             var col = options.cols[i];
             htmlStr += '<col ';
@@ -1181,24 +1177,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             }
             htmlStr += ' />';
         }
-        htmlStr += '</colgroup>';*/
-        var htmlStr = '<style>';
-        for (var i = 0; i < options.cols.length; i++) {
-            var col = options.cols[i];
-            htmlStr += ('.ew-tree-table-cell.ew-treetb-cell-' + i + ' {');
-            // 设置宽度
-            if (col.width) {
-                htmlStr += 'width: ' + col.width + 'px;'
-            } else if (col.type == 'space') {  // 空列
-                htmlStr += 'width: 15px;'
-            } else if (col.type == 'numbers') {  // 序号列
-                htmlStr += 'width: 40px;'
-            } else if (col.type == 'checkbox' || col.type == 'radio') {  // 复/单选框列
-                htmlStr += 'width: 48px;'
-            }
-            htmlStr += '}';
-        }
-        htmlStr += '</style>';
+        htmlStr += '</colgroup>';
         return htmlStr;
     }
 
@@ -1290,9 +1269,9 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             if (!(device.ie && device.ie < 9)) {
                 sWidth = sWidth - 0.48;
             }
-            $patch.css('width', sWidth);
+            $patch.attr('width', sWidth + 'px');
         } else {
-            $patch.css('width', 0);
+            $patch.attr('width', '0px');
         }
     }
 
