@@ -193,8 +193,8 @@ reqData | Function | 懒加载数据 | 详见懒加载数据
 :--- | :--- | :--- | :---
 field | String | 设定字段名 | 'username'
 title | String | 设定标题名称 | 用户名
-width | Number | 设定列宽，若不填写，则自动分配 | 150
-minWidth | Number | 单元格的最小宽度 | 100
+width | Number | 设定列宽，若不填写，则自动分配 | 150、20%(数字和百分比)
+minWidth | Number | 单元格的最小宽度 | 100(数字)
 type | String | 设定列类型 | checkbox复选框、radio单选框、numbers序号列、space空列
 edit | String | 单元格编辑类型 | text（输入框）
 style | String | 自定义单元格样式| color: red;
