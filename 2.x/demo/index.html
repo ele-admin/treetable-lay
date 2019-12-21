@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Layui树形表格2.x演示</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/layui.css">
     <link rel="stylesheet" href="demo.css">
 </head>
 <body class="page-no-scroll">
@@ -57,7 +57,7 @@
         <a href="big.html" class="layui-btn layui-btn-sm layui-btn-primary">
             <i class="layui-icon">&#xe62c;</i>数据量测试
         </a>
-        <a href="../demo1x/index.html" class="layui-btn layui-btn-sm layui-btn-primary" target="_blank">
+        <a href="../../1.x/demo/index.html" class="layui-btn layui-btn-sm layui-btn-primary" target="_blank">
             回顾1.x
         </a>
         <a href="https://whvse.gitee.io/treetable/" class="layui-btn layui-btn-sm layui-btn-primary" target="_blank">
@@ -102,10 +102,10 @@
     </div>
 </div>
 
-<script src="layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.config({
-        base: '../module/'
+        base: '../'
     }).extend({
         treeTable: 'treeTable/treeTable'
     }).use(['layer', 'util', 'treeTable'], function () {

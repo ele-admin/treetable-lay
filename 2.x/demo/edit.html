@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Layui树形表格2.x演示</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/layui.css">
     <link rel="stylesheet" href="demo.css">
 </head>
 <body class="page-no-scroll">
@@ -56,10 +56,10 @@
     </div>
 </div>
 
-<script src="layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.config({
-        base: '../module/'
+        base: '../'
     }).extend({
         treeTable: 'treeTable/treeTable'
     }).use(['layer', 'util', 'treeTable'], function () {
@@ -83,7 +83,7 @@
                 {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
             ],
             reqData: function (data, callback) {
-                var url = '../json/list';
+                var url = '../../json/list';
                 url += ((data ? ('_' + data.id) : '') + '.json');
                 $.get(url, function (res) {
                     callback(res.data);

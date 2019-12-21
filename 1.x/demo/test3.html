@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>tree-table</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/layui.css">
     <link rel="stylesheet" href="common.css"/>
 </head>
 <body>
@@ -31,10 +31,10 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
-<script src="layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.config({
-        base: '../module/'
+        base: '../'
     }).extend({
         treetable: 'treetable-lay/treetable'
     }).use(['table', 'treetable'], function () {
@@ -52,7 +52,7 @@
                 treeDefaultClose: true,
                 treeLinkage: false,
                 elem: '#table1',
-                url: '../json/data.json',
+                url: '../../json/data.json',
                 page: false,
                 cols: [[
                     {type: 'numbers'},
@@ -74,7 +74,7 @@
                 treeDefaultClose: true,
                 treeLinkage: false,
                 elem: '#table2',
-                url: '../json/data.json',
+                url: '../../json/data.json',
                 page: false,
                 cols: [[
                     {type: 'numbers'},

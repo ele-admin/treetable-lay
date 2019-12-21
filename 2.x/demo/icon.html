@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Layui树形表格2.x演示</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/layui.css">
     <link rel="stylesheet" href="demo.css">
 </head>
 <body class="page-no-scroll">
@@ -16,7 +16,7 @@
         <a href="index.html" class="layui-btn layui-btn-sm layui-btn-primary">
             <i class="layui-icon">&#xe65c;</i>返回
         </a>
-        <button id="btnLog" class="layui-btn layui-btn-sm layui-btn-primary"></button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary">此套图标已内置，配置参数即可使用</button>
     </div>
 
     <table id="demoTreeTable1"></table>
@@ -44,16 +44,22 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
+<!-- 表格状态列 -->
+<script type="text/html" id="demoTreeTableState1">
+    <input type="checkbox" lay-filter="ckState" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|锁定" {{d.state==0?'checked':''}}/>
+</script>
+
 <div class="page-loading">
     <div class="ball-loader sm">
         <span></span><span></span><span></span><span></span>
     </div>
 </div>
 
-<script src="layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.config({
-        base: '../module/'
+        base: '../'
     }).extend({
         treeTable: 'treeTable/treeTable'
     }).use(['layer', 'util', 'treeTable'], function () {
@@ -66,40 +72,40 @@
         var insTb = treeTable.render({
             elem: '#demoTreeTable1',
             tree: {
-                iconIndex: 1
+                iconIndex: 1,
+                arrowType: 'arrow2',
+                getIcon: function (d) {
+                    if (d.haveChild) {
+                        return '<i class="ew-tree-icon ew-tree-icon-folder"></i>';
+                    } else {
+                        return '<i class="ew-tree-icon ew-tree-icon-file"></i>';
+                    }
+                }
             },
-            height: 'full-150',
             cols: [
                 {type: 'numbers'},
                 {field: 'id', title: 'ID'},
                 {field: 'name', title: 'name', width: 160},
-                {
-                    field: 'createTime', title: '创建时间', templet: function (d) {
-                        return util.toDateString(d.createTime);
-                    }, width: 180
-                },
-                {
-                    title: '状态', templet: function (d) {
-                        return d.state == 0 ? '正常' : '冻结'
-                    }, width: 100
-                },
+                {field: 'createTime', title: '创建时间', width: 180},
+                {templet: '#demoTreeTableState1', title: '状态', width: 100},
                 {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
             ],
             reqData: function (data, callback) {
-                $('#btnLog').text('请求数据...');
-                var startTime = new Date().getTime();
-                $.get('../json/list_big1.json', function (res) {
-                    $('#btnLog').text('请求数据1000条......耗时' + ((new Date().getTime() - startTime) / 1000) + 's......渲染表格......');
-                    startTime = new Date().getTime();
-                    callback(res.data);
-                    $('#btnLog').text($('#btnLog').text() + '耗时' + ((new Date().getTime() - startTime) / 1000) + 's');
-                });
+                setTimeout(function () {  // 故意延迟一下
+                    var url = '../../json/list';
+                    url += ((data ? ('_' + data.id) : '') + '.json');
+                    $.get(url, function (res) {
+                        callback(res.data);
+                    });
+                }, 300);
             },
             style: 'margin-top:0;'
         });
 
-        $('body').children('.page-loading').hide();
-        $('body').removeClass('page-no-scroll');
+        setTimeout(function () {
+            $('body').children('.page-loading').hide();
+            $('body').removeClass('page-no-scroll');
+        }, 100);
 
     });
 </script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>tree-table</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/layui.css">
     <link rel="stylesheet" href="common.css"/>
 </head>
 <body>
@@ -26,10 +26,10 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
-<script src="layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.config({
-        base: '../module/'
+        base: '../'
     }).extend({
         treetable: 'treetable-lay/treetable'
     }).use(['layer', 'table', 'treetable'], function () {
@@ -41,7 +41,7 @@
         // 渲染表格
         var renderTable = function () {
             layer.load(2);
-            $.get('../json/data.json', function (res) {
+            $.get('../../json/data.json', function (res) {
                 treetable.render({
                     treeColIndex: 1,
                     treeSpid: -1,

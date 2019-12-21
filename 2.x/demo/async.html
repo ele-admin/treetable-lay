@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Layui树形表格2.x演示</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/layui.css">
     <link rel="stylesheet" href="demo.css">
 </head>
 <body class="page-no-scroll">
@@ -16,7 +16,6 @@
         <a href="index.html" class="layui-btn layui-btn-sm layui-btn-primary">
             <i class="layui-icon">&#xe65c;</i>返回
         </a>
-        <button class="layui-btn layui-btn-sm layui-btn-primary">此套图标已内置，配置参数即可使用</button>
     </div>
 
     <table id="demoTreeTable1"></table>
@@ -56,10 +55,10 @@
     </div>
 </div>
 
-<script src="layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.config({
-        base: '../module/'
+        base: '../'
     }).extend({
         treeTable: 'treeTable/treeTable'
     }).use(['layer', 'util', 'treeTable'], function () {
@@ -72,32 +71,31 @@
         var insTb = treeTable.render({
             elem: '#demoTreeTable1',
             tree: {
-                iconIndex: 1,
-                arrowType: 'arrow2',
-                getIcon: function (d) {
-                    if (d.haveChild) {
-                        return '<i class="ew-tree-icon ew-tree-icon-folder"></i>';
-                    } else {
-                        return '<i class="ew-tree-icon ew-tree-icon-file"></i>';
-                    }
-                }
+                iconIndex: 2,
+                arrowType: 'arrow2'
             },
+            text: {},
             cols: [
                 {type: 'numbers'},
+                {type: 'checkbox'},
                 {field: 'id', title: 'ID'},
                 {field: 'name', title: 'name', width: 160},
-                {field: 'createTime', title: '创建时间', width: 180},
+                {
+                    field: 'createTime', title: '创建时间', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, width: 180
+                },
                 {templet: '#demoTreeTableState1', title: '状态', width: 100},
                 {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
             ],
             reqData: function (data, callback) {
                 setTimeout(function () {  // 故意延迟一下
-                    var url = '../json/list';
+                    var url = '../../json/list';
                     url += ((data ? ('_' + data.id) : '') + '.json');
                     $.get(url, function (res) {
                         callback(res.data);
                     });
-                }, 300);
+                }, 800);
             },
             style: 'margin-top:0;'
         });
