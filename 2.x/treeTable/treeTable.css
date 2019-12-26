@@ -288,6 +288,51 @@
     display: none !important;
 }
 
+/* 单元格超出隐藏 */
+.ew-tree-table-td-single {
+    position: relative;
+}
+
+.ew-tree-table-td-single > .ew-tree-tips {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ew-tree-table-td-single > .ew-tree-tips-c {
+    position: absolute;
+    right: -3px;
+    top: -13px;
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    cursor: pointer;
+    background-color: #666;
+    border-radius: 50%;
+    color: #fff;
+    display: none;
+}
+
+.ew-tree-table-td-single.ew-tree-tips-open > .ew-tree-tips {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+    padding: 9px 15px;
+    z-index: 5;
+    min-height: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
+    border: 1px solid #e6e6e6;
+}
+
+.ew-tree-table-td-single.ew-tree-tips-open > .ew-tree-tips {
+}
+
+.ew-tree-table-td-single.ew-tree-tips-open > .ew-tree-tips-c {
+    display: block;
+}
+
 /* 列宽拖拽调整 */
 /*.ew-tree-table .ew-tb-resize {
     position: absolute;

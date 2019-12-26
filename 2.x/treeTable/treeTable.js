@@ -79,8 +79,10 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
                 templet: undefined,  // 自定义模板
                 toolbar: undefined,  // 工具列
                 width: undefined,   // 宽度
+                minWidth: undefined,  // 最小宽度
                 type: undefined,    // 列类型
                 style: undefined,   // 单元格样式
+                singleLine: false,  // 一行显示
                 fixed: undefined,    // 固定列
                 unresize: false   // 关闭拖拽列宽
             };
@@ -670,7 +672,12 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         col.align && (htmlStr += (' align="' + col.align + '"'));  // 对齐方式
         col.style && (htmlStr += (' style="' + col.style + '"'));  // 单元格样式
         htmlStr += '>';
-        htmlStr += (tdStr + '</td>');
+        if (col.singleLine) {
+            htmlStr += ('<div class="ew-tree-table-td-single"><i class="layui-icon layui-icon-close ew-tree-tips-c"></i><div class="ew-tree-tips">' + tdStr + '</div></div>');
+        } else {
+            htmlStr += tdStr;
+        }
+        htmlStr += '</td>';
         return htmlStr;
     };
 
@@ -1152,6 +1159,9 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             htmlStr += '<td data-index="' + i + '" ';
             col.align && (htmlStr += ' align="' + col.align + '"');  // 对齐方式
             htmlStr += ' >';
+            if (col.singleLine) {  // 单行显示
+                htmlStr += '<div class="ew-tree-table-td-single"><i class="layui-icon layui-icon-close ew-tree-tips-c"></i><div class="ew-tree-tips">';
+            }
             // 标题
             if (col.type == 'checkbox') {
                 htmlStr += options.getAllChooseBox();
@@ -1161,6 +1171,9 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             // 列宽拖拽
             if (!col.unresize && 'checkbox' != col.type && 'radio' != col.type && 'numbers' != col.type && 'space' != col.type) {
                 htmlStr += '<span class="ew-tb-resize"></span>';
+            }
+            if (col.singleLine) {  // 单行显示
+                htmlStr += '</div></div>';
             }
             htmlStr += '</td>';
         }

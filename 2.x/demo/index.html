@@ -282,6 +282,7 @@
                 layer.msg('点击了删除', {icon: 1});
             } else if (event == 'edit') {
                 layer.msg('点击了修改', {icon: 1});
+                obj.update({name: 'newname'});
             }
         });
 

@@ -5,6 +5,11 @@
     <title>Layui树形表格2.x演示</title>
     <link rel="stylesheet" href="../layui/css/layui.css">
     <link rel="stylesheet" href="demo.css">
+    <style>
+        thead td .layui-icon {
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body class="page-no-scroll">
 
@@ -17,6 +22,10 @@
             <i class="layui-icon">&#xe65c;</i>返回
         </a>
         <button class="layui-btn layui-btn-sm layui-btn-primary">支持格式校验</button>
+        <a class="layui-btn layui-btn-sm layui-btn-primary" href="editAdv.html" style="position: relative;">
+            <i class="layui-icon">&#xe642;</i>复杂编辑&nbsp;&nbsp;
+            <span class="layui-badge-dot" style="position: absolute;right: 3px;top: 3px;"></span>
+        </a>
     </div>
 
     <table id="demoTreeTable1"></table>
@@ -77,8 +86,8 @@
             cols: [
                 {type: 'numbers'},
                 {field: 'id', title: 'ID'},
-                {field: 'name', title: 'name', width: 160, edit: 'text'},
-                {field: 'createTime', title: '创建时间', width: 180, edit: 'text'},
+                {field: 'name', title: 'name<i class="layui-icon">&#xe642;</i>', width: 160, edit: 'text'},
+                {field: 'createTime', title: '创建时间<i class="layui-icon">&#xe642;</i>', width: 180, edit: 'text'},
                 {templet: '#demoTreeTableState1', title: '状态', width: 100},
                 {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
             ],
