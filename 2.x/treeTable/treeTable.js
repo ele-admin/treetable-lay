@@ -82,6 +82,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
                 minWidth: undefined,  // 最小宽度
                 type: undefined,    // 列类型
                 style: undefined,   // 单元格样式
+                class: '',  // 单元格class
                 singleLine: false,  // 一行显示
                 fixed: undefined,    // 固定列
                 unresize: false   // 关闭拖拽列宽
@@ -671,6 +672,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         col.type && (htmlStr += (' data-type="' + col.type + '"'));
         col.align && (htmlStr += (' align="' + col.align + '"'));  // 对齐方式
         col.style && (htmlStr += (' style="' + col.style + '"'));  // 单元格样式
+        col.class && (htmlStr += (' class="' + col.class + '"'));  // 单元格样式
         htmlStr += '>';
         if (col.singleLine) {
             htmlStr += ('<div class="ew-tree-table-td-single"><i class="layui-icon layui-icon-close ew-tree-tips-c"></i><div class="ew-tree-tips">' + tdStr + '</div></div>');
@@ -1303,6 +1305,35 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         });
     });
 
+    // 表格溢出点击展开功能
+    $(document).on('mouseenter', '.ew-tree-table td', function () {
+        var $tdSingle = $(this).children('.ew-tree-table-td-single');
+        var $content = $tdSingle.children('.ew-tree-tips');
+        if ($tdSingle.length > 0 && $content.prop('scrollWidth') > $content.outerWidth()) {
+            $(this).append('<div class="layui-table-grid-down"><i class="layui-icon layui-icon-down"></i></div>');
+        }
+    }).on('mouseleave', '.ew-tree-table td', function () {
+        $(this).children('.layui-table-grid-down').remove();
+    });
+    // 点击箭头展开
+    $(document).on('click', '.ew-tree-table td>.layui-table-grid-down', function (e) {
+        $('.ew-tree-table-td-single').removeClass('ew-tree-tips-open');
+        var $tdSingle = $(this).parent().children('.ew-tree-table-td-single');
+        $tdSingle.addClass('ew-tree-tips-open');
+        var $box = $tdSingle.parentsUntil('.ew-tree-table-box').parent();
+        if (($tdSingle.outerWidth() + $tdSingle.parent().offset().left) > $box.offset().left + $box.outerWidth()) {
+            $tdSingle.addClass('ew-show-left');
+        }
+        if (($tdSingle.outerHeight() + $tdSingle.parent().offset().top) > $box.offset().top + $box.outerHeight()) {
+            $tdSingle.addClass('ew-show-bottom');
+        }
+    });
+    // 点击关闭按钮关闭
+    $(document).on('click', '.ew-tree-table .ew-tree-tips-c', function () {
+        $(this).parent().removeClass('ew-tree-tips-open');
+        $(this).parent().removeClass('ew-show-left');
+    });
+
     /** 判断是否还有子节点 */
     function getHaveChild(d, treeOption) {
         var haveChild = false;
@@ -1401,6 +1432,11 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
     /* 获取浏览器高度 */
     function getPageHeight() {
         return document.documentElement.clientHeight || document.body.clientHeight;
+    }
+
+    /* 获取浏览器宽度 */
+    function getPageWidth() {
+        return document.documentElement.clientWidth || document.body.clientWidth;
     }
 
     /** 对外提供的方法 */

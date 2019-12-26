@@ -301,36 +301,69 @@
 
 .ew-tree-table-td-single > .ew-tree-tips-c {
     position: absolute;
-    right: -3px;
-    top: -13px;
-    width: 20px;
-    height: 20px;
-    padding: 3px;
-    cursor: pointer;
-    background-color: #666;
-    border-radius: 50%;
+    right: -5px;
+    top: -5px;
+    width: 18px;
+    height: 18px;
+    line-height: 19px;
+    font-size: 14px;
+    text-align: center;
     color: #fff;
+    border-radius: 50%;
+    background-color: #666;
+    cursor: pointer;
     display: none;
 }
 
-.ew-tree-table-td-single.ew-tree-tips-open > .ew-tree-tips {
+.ew-tree-table-td-single.ew-tree-tips-open {
     position: absolute;
     top: 0;
     left: 0;
-    background: #fff;
-    padding: 9px 15px;
     z-index: 5;
+    background: #fff;
     min-height: 100%;
     box-sizing: border-box;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
-    border: 1px solid #e6e6e6;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, .15);
+}
+
+.ew-tree-table-td-single.ew-tree-tips-open.ew-show-left {
+    right: 0;
+    left: auto;
+    box-shadow: -3px 3px 8px rgba(0, 0, 0, .15);
+}
+
+.ew-tree-table-td-single.ew-tree-tips-open.ew-show-bottom {
+    bottom: 0;
+    top: auto;
+    box-shadow: 3px -3px 8px rgba(0, 0, 0, .15);
+}
+
+.ew-tree-table-td-single.ew-tree-tips-open.ew-show-left.ew-show-bottom {
+    box-shadow: -3px -3px 8px rgba(0, 0, 0, .15);
 }
 
 .ew-tree-table-td-single.ew-tree-tips-open > .ew-tree-tips {
+    padding: 9px 15px;
+    overflow: auto;
+    max-width: 280px;
+    max-height: 100px;
+    width: max-content;
+    white-space: normal;
 }
 
 .ew-tree-table-td-single.ew-tree-tips-open > .ew-tree-tips-c {
     display: block;
+}
+
+.ew-tree-table td > .layui-table-grid-down {
+    bottom: 0;
+    height: auto;
+}
+
+/* 辅助样式 */
+.pd-tb-0 {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 /* 列宽拖拽调整 */
