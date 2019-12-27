@@ -127,15 +127,15 @@
 }
 
 /* 箭头变加载中状态 */
-.ew-tree-table .ew-tree-table-loading > td > .ew-tree-pack > .ew-tree-table-arrow:before {
+.ew-tree-table .ew-tree-table-loading > td .ew-tree-pack > .ew-tree-table-arrow:before {
     content: "\e63d" !important;
 }
 
-.ew-tree-table .ew-tree-table-loading > td > .ew-tree-pack > .ew-tree-table-arrow {
+.ew-tree-table .ew-tree-table-loading > td .ew-tree-pack > .ew-tree-table-arrow {
     margin-right: 0;
 }
 
-.ew-tree-table .ew-tree-table-loading > td > .ew-tree-pack > .ew-tree-table-arrow + * {
+.ew-tree-table .ew-tree-table-loading > td .ew-tree-pack > .ew-tree-table-arrow + * {
     margin-left: 5px;
 }
 
@@ -301,12 +301,12 @@
 
 .ew-tree-table-td-single > .ew-tree-tips-c {
     position: absolute;
-    right: -5px;
-    top: -5px;
-    width: 18px;
-    height: 18px;
-    line-height: 19px;
-    font-size: 14px;
+    right: -10px;
+    top: -6px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 18px;
     text-align: center;
     color: #fff;
     border-radius: 50%;
@@ -315,15 +315,25 @@
     display: none;
 }
 
+.ew-tree-table table tr:first-child .ew-tree-table-td-single > .ew-tree-tips-c {
+    top: 2px;
+    bottom: auto;
+    right: -12px;
+}
+
 .ew-tree-table-td-single.ew-tree-tips-open {
     position: absolute;
     top: 0;
     left: 0;
     z-index: 5;
-    background: #fff;
+    background-color: #fff;
     min-height: 100%;
     box-sizing: border-box;
     box-shadow: 3px 3px 8px rgba(0, 0, 0, .15);
+}
+
+.ew-tree-table table thead .ew-tree-table-td-single.ew-tree-tips-open {
+    background-color: #f2f2f2;
 }
 
 .ew-tree-table-td-single.ew-tree-tips-open.ew-show-left {
@@ -355,6 +365,11 @@
     display: block;
 }
 
+.ew-tree-table-td-single.ew-tree-tips-open.ew-show-left > .ew-tree-tips-c {
+    left: -10px;
+    right: auto !important;
+}
+
 .ew-tree-table td > .layui-table-grid-down {
     bottom: 0;
     height: auto;
@@ -362,8 +377,12 @@
 
 /* 辅助样式 */
 .pd-tb-0 {
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.break-all {
+    word-break: break-all !important;
 }
 
 /* 列宽拖拽调整 */

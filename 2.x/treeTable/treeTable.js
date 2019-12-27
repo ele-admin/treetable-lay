@@ -83,7 +83,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
                 type: undefined,    // 列类型
                 style: undefined,   // 单元格样式
                 class: '',  // 单元格class
-                singleLine: false,  // 一行显示
+                singleLine: true,  // 一行显示
                 fixed: undefined,    // 固定列
                 unresize: false   // 关闭拖拽列宽
             };
@@ -224,7 +224,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var commonMember = function (ext) {
             var $tr = $(this);
             if (!$tr.is('tr')) {
-                $tr = $tr.parentsUntil('tr[data-id]').parent();
+                $tr = $tr.parentsUntil('tr[data-id]').last().parent();
             }
             var id = $tr.data('id');
             var data = getDataById(options.data, id, options.tree);
@@ -271,7 +271,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         // 绑定折叠展开事件
         $tbody.off('click.fold').on('click.fold', '.ew-tree-pack', function (e) {
             layui.stope(e);
-            var $tr = $(this).parent().parent();
+            var $tr = $(this).parentsUntil('tr').last().parent();
             if ($tr.hasClass('ew-tree-table-loading')) {  // 已是加载中
                 return;
             }
@@ -322,7 +322,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             var d = getDataById(options.data, data.value, options.tree);
             d.LAY_CHECKED = checked;  // 同时更新数据
             // 联动操作
-            var $tr = $cb.parentsUntil('tr').parent();
+            var $tr = $cb.parentsUntil('tr').last().parent();
             if (d[options.tree.childName] && d[options.tree.childName].length > 0) {
                 that.checkSubCB($tr, checked);  // 联动子级
             }
@@ -617,14 +617,17 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var fieldStr = '';
         if (col.type == 'numbers') {  // 序号列
             fieldStr += '<span class="ew-tree-table-numbers"></span>';
+            col.singleLine = false;
         } else if (col.type == 'checkbox') {  // 复选框列
             var attrStr = 'name="' + checkboxFilter + '" lay-filter="' + checkboxFilter + '" value="' + d[treeOption.idName] + '"';
             attrStr += d.LAY_CHECKED ? ' checked="checked"' : '';
             fieldStr += '<input type="checkbox" lay-skin="primary" ' + attrStr + ' class="ew-tree-table-checkbox" />';
+            col.singleLine = false;
         } else if (col.type == 'radio') {  // 单选框列
             var attrStr = 'name="' + radioFilter + '" lay-filter="' + radioFilter + '" value="' + d[treeOption.idName] + '"';
             attrStr += d.LAY_CHECKED ? ' checked="checked"' : '';
             fieldStr += '<input type="radio" ' + attrStr + ' class="ew-tree-table-radio" />';
+            col.singleLine = false;
         } else if (col.templet) {  // 自定义模板
             if (typeof col.templet == 'function') {
                 fieldStr += col.templet(d);
@@ -697,7 +700,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         // 显示loading
         if ($tr) {
             $tr.addClass('ew-tree-table-loading');
-            $tr.children('td').children('.ew-tree-pack').children('.ew-tree-table-arrow').addClass('layui-anim layui-anim-rotate layui-anim-loop');
+            $tr.children('td').find('.ew-tree-pack').children('.ew-tree-table-arrow').addClass('layui-anim layui-anim-rotate layui-anim-loop');
         } else {
             if (options.data && options.data.length > 0) {
                 $tbLoading.addClass('ew-loading-float');
@@ -714,7 +717,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             // 移除loading
             if ($tr) {
                 $tr.removeClass('ew-tree-table-loading');
-                $tr.children('td').children('.ew-tree-pack').children('.ew-tree-table-arrow').removeClass('layui-anim layui-anim-rotate layui-anim-loop');
+                $tr.children('td').find('.ew-tree-pack').children('.ew-tree-table-arrow').removeClass('layui-anim layui-anim-rotate layui-anim-loop');
             } else {
                 $tbLoading.hide();
                 $tbLoading.removeClass('ew-loading-float');
@@ -806,7 +809,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             if (parseInt($(this).data('indent')) <= indent) {
                 return false;
             }
-            var $cb = $(this).children('td').children('input[name="' + cbFilter + '"]');
+            var $cb = $(this).children('td').find('input[name="' + cbFilter + '"]');
             $cb.prop('checked', checked);
             if (checked) {
                 $cb.data('indeterminate', 'false');
@@ -834,14 +837,14 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             if (parseInt($(this).data('indent')) <= indent) {
                 return false;
             }
-            var $cb = $(this).children('td').children('input[name="' + cbFilter + '"]');
+            var $cb = $(this).children('td').find('input[name="' + cbFilter + '"]');
             if ($cb.prop('checked')) {
                 ckNum++;
             } else {
                 unCkNum++;
             }
         });
-        var $cb = $tr.children('td').children('input[name="' + cbFilter + '"]');
+        var $cb = $tr.children('td').find('input[name="' + cbFilter + '"]');
         if (ckNum > 0 && unCkNum == 0) {  // 全选
             $cb.prop('checked', true);
             $cb.data('indeterminate', 'false');
@@ -869,7 +872,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var $tbody = components.$table.children('tbody');
         var ckNum = 0, unCkNum = 0;
         $tbody.children('tr').each(function () {
-            var $cb = $(this).children('td').children('input[name="' + cbFilter + '"]');
+            var $cb = $(this).children('td').find('input[name="' + cbFilter + '"]');
             if ($cb.prop('checked')) {
                 ckNum++;
             } else {
@@ -965,7 +968,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var components = this.getComponents();
         var $tr = components.$table.children('tbody').children('tr[data-id="' + id + '"]');
         if (!$tr.hasClass('ew-tree-table-open')) {
-            $tr.children('td').children('.ew-tree-pack').trigger('click');
+            $tr.children('td').find('.ew-tree-pack').trigger('click');
         }
         if (cascade == false) {
             return;
@@ -976,7 +979,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             var tInd = parseInt($(this).data('indent'));
             if (tInd < indent) {
                 if (!$(this).hasClass('ew-tree-table-open')) {
-                    $(this).children('td').children('.ew-tree-pack').trigger('click');
+                    $(this).children('td').find('.ew-tree-pack').trigger('click');
                 }
                 indent = tInd;
             }
@@ -988,7 +991,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var components = this.getComponents();
         var $tr = components.$table.children('tbody').children('tr[data-id="' + id + '"]');
         if ($tr.hasClass('ew-tree-table-open')) {
-            $tr.children('td').children('.ew-tree-pack').trigger('click');
+            $tr.children('td').find('.ew-tree-pack').trigger('click');
         }
         if (cascade == false) {
             return;
@@ -999,7 +1002,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             var tInd = parseInt($(this).data('indent'));
             if (tInd < indent) {
                 if ($(this).hasClass('ew-tree-table-open')) {
-                    $(this).children('td').children('.ew-tree-pack').trigger('click');
+                    $(this).children('td').find('.ew-tree-pack').trigger('click');
                 }
                 indent = tInd;
             }
@@ -1161,7 +1164,7 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
             htmlStr += '<td data-index="' + i + '" ';
             col.align && (htmlStr += ' align="' + col.align + '"');  // 对齐方式
             htmlStr += ' >';
-            if (col.singleLine) {  // 单行显示
+            if (col.singleLine && col.type != 'checkbox') {  // 单行显示
                 htmlStr += '<div class="ew-tree-table-td-single"><i class="layui-icon layui-icon-close ew-tree-tips-c"></i><div class="ew-tree-tips">';
             }
             // 标题
@@ -1317,22 +1320,39 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
     });
     // 点击箭头展开
     $(document).on('click', '.ew-tree-table td>.layui-table-grid-down', function (e) {
-        $('.ew-tree-table-td-single').removeClass('ew-tree-tips-open');
+        hideAllTdTips();
         var $tdSingle = $(this).parent().children('.ew-tree-table-td-single');
         $tdSingle.addClass('ew-tree-tips-open');
-        var $box = $tdSingle.parentsUntil('.ew-tree-table-box').parent();
+        var $box = $tdSingle.parents().filter('.ew-tree-table-box');
+        if ($box.length <= 0) {
+            $box = $tdSingle.parents().filter('.ew-tree-table-head');
+        }
         if (($tdSingle.outerWidth() + $tdSingle.parent().offset().left) > $box.offset().left + $box.outerWidth()) {
             $tdSingle.addClass('ew-show-left');
         }
         if (($tdSingle.outerHeight() + $tdSingle.parent().offset().top) > $box.offset().top + $box.outerHeight()) {
             $tdSingle.addClass('ew-show-bottom');
         }
+        e.stopPropagation();
     });
     // 点击关闭按钮关闭
-    $(document).on('click', '.ew-tree-table .ew-tree-tips-c', function () {
-        $(this).parent().removeClass('ew-tree-tips-open');
-        $(this).parent().removeClass('ew-show-left');
+    $(document).on('click', '.ew-tree-table .ew-tree-tips-c', function (e) {
+        hideAllTdTips();
     });
+    // 点击空白部分关闭
+    $(document).on('click', function () {
+        hideAllTdTips();
+    });
+    $(document).on('click', '.ew-tree-table-td-single.ew-tree-tips-open', function (e) {
+        e.stopPropagation();
+    });
+
+    /* 关闭所有单元格溢出提示框 */
+    function hideAllTdTips() {
+        var $single = $('.ew-tree-table-td-single');
+        $single.removeClass('ew-tree-tips-open');
+        $single.removeClass('ew-show-left');
+    }
 
     /** 判断是否还有子节点 */
     function getHaveChild(d, treeOption) {

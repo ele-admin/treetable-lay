@@ -106,15 +106,15 @@
                     title: 'name<i class="layui-icon">&#xe642;</i>',
                     width: 160,
                     edit: 'text',
-                    style: 'word-break: break-all;'
+                    class: 'break-all'
                 },
                 {
                     title: '创建时间', width: 180, templet: function (d) {
                         return '<div lay-date="' + d.id + '">' + util.toDateString(d.createTime, 'yyyy-MM-dd') + '</div>';
                     }
                 },
-                {templet: '#demoTreeTableSel', title: '部门', width: 140, style: 'padding-top:0;padding-bottom:0;'},
-                {templet: '#demoTreeTableState1', title: '状态', width: 100, style: 'padding-top:0;padding-bottom:0;'},
+                {templet: '#demoTreeTableSel', title: '部门', width: 140, singleLine: false, class: 'pd-tb-0'},
+                {templet: '#demoTreeTableState1', title: '状态', width: 100, class: 'pd-tb-0'},
                 {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
             ],
             reqData: function (data, callback) {
