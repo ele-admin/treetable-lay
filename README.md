@@ -471,6 +471,18 @@ treeTable.render({
 如果你设置了`singleLine:false`关闭单行显示，像自动换行，然而当单元格内容为连续的数字和字符串时，却又无法自动换行，
 只需要添加`class: 'break-all'`参数即可，这个参数会给单元格增加一个 word-break: break-all 的样式。
 
+3.没有子级、各种报错：<br/>
+`检查id、pid这些字段是否与默认一致，如果不一致需要配置`
+```javascript
+treeTable.render({
+    tree: {
+        idName: 'id',
+        pidName: 'pid',
+        childName: 'children'
+    },
+});
+```
+
 
 ## 效果展示
 
