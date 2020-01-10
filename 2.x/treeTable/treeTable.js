@@ -224,7 +224,12 @@ layui.define(['layer', 'laytpl', 'form'], function (exports) {
         var commonMember = function (ext) {
             var $tr = $(this);
             if (!$tr.is('tr')) {
-                $tr = $tr.parentsUntil('tr[data-id]').last().parent();
+                var $td_tr = $tr.parent('tr[data-id]');
+                if ($td_tr.length > 0) {
+                    $tr = $td_tr;
+                } else {
+                    $tr = $tr.parentsUntil('tr[data-id]').last().parent();
+                }
             }
             var id = $tr.data('id');
             var data = getDataById(options.data, id, options.tree);
