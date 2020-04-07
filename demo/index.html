@@ -3,9 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <meta http-equiv="refresh" content="0;URL=2.x/demo/index.html">
+    <!--<meta http-equiv="refresh" content="0;URL=2.x/demo/index.html">-->
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="../treeTable.css">
 </head>
 <body>
+<table id="demoTb"></table>
+<script src="layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../'
+    }).use(['layer', 'treeTable'], function () {
+        var $ = layui.jquery;
+        var treeTable = layui.treeTable;
 
+        // 渲染表格
+        var insTb = treeTable.render({
+            elem: '#demoTb',
+            data: {
+                "code": 0,
+                "msg": "ok",
+                "data": [
+                    {
+                        "id": 1,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": -1
+                    },
+                    {
+                        "id": 2,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 1
+                    },
+                    {
+                        "id": 3,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 1
+                    },
+                    {
+                        "id": 4,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 1
+                    },
+                    {
+                        "id": 5,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": -1
+                    },
+                    {
+                        "id": 6,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 5
+                    },
+                    {
+                        "id": 7,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 5
+                    },
+                    {
+                        "id": 8,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 6
+                    },
+                    {
+                        "id": 9,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 6
+                    },
+                    {
+                        "id": 10,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 9
+                    },
+                    {
+                        "id": 11,
+                        "name": "xx",
+                        "sex": "male",
+                        "pid": 9
+                    }
+                ],
+                "count": 11
+            }.data,
+            tree: {
+                isPidData: true
+            },
+            cols: [
+                [
+                    {title: 'cc', colspan: 3}
+                ],
+                [
+                    {field: 'id', title: 'ID'},
+                    {field: 'name', title: 'name'},
+                    {field: 'sex', title: '创建时间'}
+                ]
+            ]
+        });
+        //console.log(insTb);
+
+    });
+</script>
 </body>
 </html>
