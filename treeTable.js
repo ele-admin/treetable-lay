@@ -279,6 +279,7 @@ layui.define(['laytpl', 'form'], function (exports) {
         /* 根据获取行对应数据 */
         function getDataByTr($tr) {
             var data;
+            if (!$tr || $tr.length === 0) return data;
             var index = $tr.data('index').split(',');
             for (var i = 0; i < index.length; i++) {
                 if (data) data = data[options.tree.childName][index[i]];
