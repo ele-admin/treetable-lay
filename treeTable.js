@@ -217,7 +217,7 @@ layui.define(['laytpl', 'form'], function (exports) {
                 headHtml.push('<td');
                 if (item2.colspan) headHtml.push(' colspan="' + item2.colspan + '"');
                 if (item2.rowspan) headHtml.push(' rowspan="' + item2.rowspan + '"');
-                headHtml.push(' align="' + item2.align + '"');
+                if (item2.align) headHtml.push(' align="' + item2.align + '"');
                 headHtml.push('>');
                 headHtml.push('<div class="ew-tree-table-cell' + (item2.singleLine ? ' single-line' : '') + '"><div>');
                 // 标题
@@ -280,7 +280,9 @@ layui.define(['laytpl', 'form'], function (exports) {
         function getDataByTr($tr) {
             var data;
             if (!$tr || $tr.length === 0) return data;
-            var index = $tr.data('index').split(',');
+            var index = $tr.data('index');
+            if (typeof index === 'number') index = [index];
+            else index = index.split(',');
             for (var i = 0; i < index.length; i++) {
                 if (data) data = data[options.tree.childName][index[i]];
                 else data = options.data[index[i]];
