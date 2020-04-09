@@ -23,17 +23,18 @@
         var insTb = treeTable.render({
             elem: '#demoTb',
             /*width: '200px',*/
-            height: '150px',
+            height: '200px',
             tree: {
                 isPidData: true,
-                iconIndex: 1
+                iconIndex: 2
             },
             cols: [
                 [
-                    {title: 'cc', colspan: 4}
+                    {title: 'cc', colspan: 5}
                 ],
                 [
                     {type: 'numbers', title: '#'},
+                    {type: 'checkbox'},
                     {field: 'id', title: 'ID'},
                     {field: 'name', title: 'name'},
                     {field: 'sex', title: '创建时间'}

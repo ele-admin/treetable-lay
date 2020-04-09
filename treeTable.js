@@ -42,7 +42,11 @@ layui.define(['laytpl', 'form'], function (exports) {
             arrowType: undefined,               // 折叠箭头类型
             onlyIconControl: undefined,         // 仅点击图标控制展开折叠
             getIcon: function (d) {             // 自定义图标
-                return getIcon(d, this);
+                if (getHaveChild(d, this)) {
+                    return '<i class="ew-tree-icon layui-icon layui-icon-layer"></i>';
+                } else {
+                    return '<i class="ew-tree-icon layui-icon layui-icon-file"></i>';
+                }
             }
         }
     };
@@ -83,17 +87,17 @@ layui.define(['laytpl', 'form'], function (exports) {
                 if (!item2.INIT_OK) item2 = $.extend({INIT_OK: true}, colDefaultOption, item2);
                 // 特殊列处理
                 if (item2.type === 'space') {  // 空列
-                    item2.width = 15;
+                    if (!item2.width) item2.width = 15;
                 } else if (item2.type === 'numbers') {  // 序号列
-                    item2.width = 40;
-                    item2.singleLine = false;
-                    item2.unresize = false;
+                    if (!item2.width) item2.width = 40;
+                    if (!item2.singleLine) item2.singleLine = false;
+                    if (!item2.unresize) item2.unresize = false;
                     if (!item2.align) item2.align = 'center';
                 } else if (item2.type === 'checkbox' || item2.type === 'radio') {  // 复/单选框列
-                    item2.width = 48;
-                    item2.singleLine = false;
-                    item2.unresize = false;
-                    item2.align = 'center';
+                    if (!item2.width) item2.width = 48;
+                    if (!item2.singleLine) item2.singleLine = false;
+                    if (!item2.unresize) item2.unresize = false;
+                    if (!item2.align) item2.align = 'center';
                 }
                 // 合并单元格处理
                 item2.key = i1 + '-' + i2;
@@ -187,7 +191,6 @@ layui.define(['laytpl', 'form'], function (exports) {
             components.$tHeadGroup.css('width', options.width);
             components.$tBodyGroup.css('width', options.width);
         }
-
         // 最小宽度
         var minWidth = 0;
         this.eachCols(function (i, item) {
@@ -198,6 +201,7 @@ layui.define(['laytpl', 'form'], function (exports) {
         });
         if (minWidth) components.$tHead.css('min-width', minWidth);
         if (minWidth) components.$tBody.css('min-width', minWidth);
+
         // 生成colgroup
         var colgroupHtml = ['<colgroup>'];
         this.eachCols(function (i, item) {
@@ -208,31 +212,8 @@ layui.define(['laytpl', 'form'], function (exports) {
         });
         colgroupHtml.push('</colgroup>');
         colgroupHtml = colgroupHtml.join('');
-
         // 生成thead
-        var headHtml = ['<thead>'];
-        $.each(options.cols, function (i1, item1) {
-            headHtml.push('<tr>');
-            $.each(item1, function (i2, item2) {
-                headHtml.push('<td');
-                if (item2.colspan) headHtml.push(' colspan="' + item2.colspan + '"');
-                if (item2.rowspan) headHtml.push(' rowspan="' + item2.rowspan + '"');
-                if (item2.align) headHtml.push(' align="' + item2.align + '"');
-                headHtml.push('>');
-                headHtml.push('<div class="ew-tree-table-cell' + (item2.singleLine ? ' single-line' : '') + '"><div>');
-                // 标题
-                var ca = '<input type="checkbox" lay-filter="' + components.chooseAllFilter + '" lay-skin="primary" class="ew-tree-table-checkbox"/>';
-                if (item2.type === 'checkbox') headHtml.push(ca);
-                else headHtml.push(item2.title || '');
-                headHtml.push('</div><i class="layui-icon layui-icon-close ew-tree-tips-c"></i></div>');
-                // 列宽拖拽
-                if (!item2.unresize) headHtml.push('<span class="ew-tb-resize"></span>');
-                headHtml.push('</td>');
-            });
-            headHtml.push('</tr>');
-        });
-        headHtml.push('</thead>');
-        headHtml = headHtml.join('');
+        var headHtml = '<thead>' + this.renderBodyTh() + '</thead>';
 
         // 渲染表结构
         if (options.height) {  // 固定表头
@@ -276,20 +257,6 @@ layui.define(['laytpl', 'form'], function (exports) {
         var components = this.getComponents();
         var $allBody = components.$table.children('tbody');
 
-        /* 根据获取行对应数据 */
-        function getDataByTr($tr) {
-            var data;
-            if (!$tr || $tr.length === 0) return data;
-            var index = $tr.data('index');
-            if (typeof index === 'number') index = [index];
-            else index = index.split(',');
-            for (var i = 0; i < index.length; i++) {
-                if (data) data = data[options.tree.childName][index[i]];
-                else data = options.data[index[i]];
-            }
-            return data;
-        }
-
         /* 行事件公共返回对象 */
         var member = function (ext) {
             // 获取行dom
@@ -299,7 +266,7 @@ layui.define(['laytpl', 'form'], function (exports) {
                 if ($temp.length > 0) $tr = $temp;
                 else $tr = $tr.parentsUntil('tr').last().parent();
             }
-            var data = getDataByTr($tr);  // 行对应数据
+            var data = that.getDataByTr($tr);  // 行对应数据
             var obj = {
                 tr: $tr,
                 data: data,
@@ -336,14 +303,14 @@ layui.define(['laytpl', 'form'], function (exports) {
         };
 
         // 绑定折叠展开事件
-        components.$tBody.off('click.fold').on('click.fold', '.ew-tree-pack', function (e) {
+        $allBody.off('click.fold').on('click.fold', '.ew-tree-pack', function (e) {
             layui.stope(e);
             var $tr = $(this).parentsUntil('tr').last().parent();
             if ($tr.hasClass('ew-tree-table-loading')) return; // 已是加载中
             var haveChild = $tr.data('have-child');
             if (haveChild !== true && haveChild !== 'true') return; // 子节点
             var open = $tr.hasClass('ew-tree-table-open');
-            var data = getDataByTr($tr);
+            var data = that.getDataByTr($tr);
             if (!open && (!data[options.tree.childName] || data[options.tree.childName].length === 0)) {
                 that.renderBodyAsync(data, $tr);
             } else {
@@ -352,7 +319,7 @@ layui.define(['laytpl', 'form'], function (exports) {
         });
 
         // 绑定lay-event事件
-        components.$tBody.off('click.tool').on('click.tool', '*[lay-event]', function (e) {
+        $allBody.off('click.tool').on('click.tool', '*[lay-event]', function (e) {
             layui.stope(e);
             var $this = $(this);
             layui.event.call(this, MOD_NAME, 'tool(' + components.filter + ')', member.call(this, {
@@ -362,7 +329,7 @@ layui.define(['laytpl', 'form'], function (exports) {
 
         // 绑定单选框事件
         form.on('radio(' + components.radioFilter + ')', function (data) {
-            var d = getDataByTr($(data.elem).parentsUntil('tr').last().parent());
+            var d = that.getDataByTr($(data.elem).parentsUntil('tr').last().parent());
             that.removeAllChecked();
             d.LAY_CHECKED = true;  // 同时更新数据
             layui.event.call(this, MOD_NAME, 'checkbox(' + components.filter + ')',
@@ -382,7 +349,7 @@ layui.define(['laytpl', 'form'], function (exports) {
                 $cb.removeClass('ew-form-indeterminate');
             }
             var $tr = $cb.parentsUntil('tr').last().parent();
-            var d = getDataByTr($tr);
+            var d = that.getDataByTr($tr);
             d.LAY_CHECKED = checked;  // 同时更新数据
             // 联动操作
             if (d[options.tree.childName] && d[options.tree.childName].length > 0) {
@@ -447,7 +414,7 @@ layui.define(['laytpl', 'form'], function (exports) {
                 if ($allBody.find('.ew-tree-table-edit').length > 0) return;
                 var index = $td.data('index');
                 var indent = $td.find('.ew-tree-table-indent').length;
-                var d = getDataByTr($td.parent());
+                var d = that.getDataByTr($td.parent());
                 if ('text' === edit || 'number' === edit) {  // 文本框
                     var $input = $('<input type="' + edit + '" class="layui-input ew-tree-table-edit"/>');
                     $input[0].value = d[field];
@@ -794,6 +761,56 @@ layui.define(['laytpl', 'form'], function (exports) {
     };
 
     /**
+     * 渲染表头
+     * @returns {string}
+     */
+    TreeTable.prototype.renderBodyTh = function () {
+        var options = this.options;
+        var components = this.getComponents();
+        var html = [];
+        $.each(options.cols, function (i1, item1) {
+            html.push('<tr>');
+            $.each(item1, function (i2, item2) {
+                html.push('<td');
+                if (item2.colspan) html.push(' colspan="' + item2.colspan + '"');
+                if (item2.rowspan) html.push(' rowspan="' + item2.rowspan + '"');
+                if (item2.type) html.push(' data-type="' + item2.type + '"');
+                if (item2.align) html.push(' align="' + item2.align + '"');
+                html.push('>');
+                html.push('<div class="ew-tree-table-cell' + (item2.singleLine ? ' single-line' : '') + '"><div>');
+                // 标题
+                var ca = '<input type="checkbox" lay-filter="' + components.chooseAllFilter + '" lay-skin="primary" class="ew-tree-table-checkbox"/>';
+                if (item2.type === 'checkbox') html.push(ca);
+                else html.push(item2.title || '');
+                html.push('</div><i class="layui-icon layui-icon-close ew-tree-tips-c"></i></div>');
+                // 列宽拖拽
+                if (!item2.unresize) html.push('<span class="ew-tb-resize"></span>');
+                html.push('</td>');
+            });
+            html.push('</tr>');
+        });
+        return html.join('');
+    };
+
+    /**
+     * 获取行对应数据
+     * @param $tr
+     * @returns {*}
+     */
+    TreeTable.prototype.getDataByTr = function ($tr) {
+        var data;
+        if (!$tr || $tr.length === 0) return data;
+        var index = $tr.data('index');
+        if (typeof index === 'number') index = [index];
+        else index = index.split('-');
+        for (var i = 0; i < index.length; i++) {
+            if (data) data = data[this.options.tree.childName][index[i]];
+            else data = this.options.data[index[i]];
+        }
+        return data;
+    };
+
+    /**
      * 联动子级复选框状态
      * @param $tr 当前tr的dom
      * @param checked
@@ -801,29 +818,21 @@ layui.define(['laytpl', 'form'], function (exports) {
     TreeTable.prototype.checkSubCB = function ($tr, checked) {
         var that = this;
         var components = this.getComponents();
-        var cbFilter = components.checkboxFilter;
         var indent = -1, $trList;
         if ($tr.is('tbody')) {
             $trList = $tr.children('tr');
         } else {
             indent = parseInt($tr.data('indent'));
-            $trList = $tr.nextAll('tr')
+            $trList = $tr.nextAll('tr');
         }
         $trList.each(function () {
-            if (parseInt($(this).data('indent')) <= indent) {
-                return false;
-            }
-            var $cb = $(this).children('td').find('input[name="' + cbFilter + '"]');
+            if (parseInt($(this).data('indent')) <= indent) return false;
+            var $cb = $(this).children('td').find('input[lay-filter="' + components.checkboxFilter + '"]');
             $cb.prop('checked', checked);
-            if (checked) {
-                $cb.data('indeterminate', 'false');
-                $cb.next('.layui-form-checkbox').addClass('layui-form-checked');
-                $cb.next('.layui-form-checkbox').removeClass('ew-form-indeterminate');
-            } else {
-                $cb.data('indeterminate', 'false');
-                $cb.next('.layui-form-checkbox').removeClass('layui-form-checked ew-form-indeterminate');
-            }
-            that.update($(this).data('id'), {LAY_CHECKED: checked});  // 同步更新数据
+            $cb.removeClass('ew-form-indeterminate');
+            if (checked) $cb.next('.layui-form-checkbox').addClass('layui-form-checked');
+            else $cb.next('.layui-form-checkbox').removeClass('layui-form-checked');
+            that.getDataByTr($(this)).LAY_CHECKED = checked;  // 同步更新数据
         });
     };
 
@@ -832,71 +841,70 @@ layui.define(['laytpl', 'form'], function (exports) {
      * @param $tr 父级的dom
      */
     TreeTable.prototype.checkParentCB = function ($tr) {
-        var that = this;
+        var options = this.options;
         var components = this.getComponents();
-        var cbFilter = components.checkboxFilter;
-        var indent = parseInt($tr.data('indent'));
+        var d = this.getDataByTr($tr);
         var ckNum = 0, unCkNum = 0;
-        $tr.nextAll('tr').each(function () {
-            if (parseInt($(this).data('indent')) <= indent) {
-                return false;
+        if (d[options.tree.childName]) {
+            function checkNum(data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].LAY_CHECKED) ckNum++;
+                    else unCkNum++;
+                    if (data[i][options.tree.childName]) checkNum(data[i][options.tree.childName]);
+                }
             }
-            var $cb = $(this).children('td').find('input[name="' + cbFilter + '"]');
-            if ($cb.prop('checked')) {
-                ckNum++;
-            } else {
-                unCkNum++;
-            }
-        });
-        var $cb = $tr.children('td').find('input[name="' + cbFilter + '"]');
-        if (ckNum > 0 && unCkNum == 0) {  // 全选
+
+            checkNum(d[options.tree.childName]);
+        }
+        var $cb = $tr.children('td').find('input[lay-filter="' + components.checkboxFilter + '"]');
+        if (ckNum > 0 && unCkNum === 0) {  // 全选
             $cb.prop('checked', true);
-            $cb.data('indeterminate', 'false');
+            $cb.removeClass('ew-form-indeterminate');
             $cb.next('.layui-form-checkbox').addClass('layui-form-checked');
-            $cb.next('.layui-form-checkbox').removeClass('ew-form-indeterminate');
-            that.update($tr.data('id'), {LAY_CHECKED: true});  // 同步更新数据
-        } else if (ckNum == 0 && unCkNum > 0) {  // 全不选
+            d.LAY_CHECKED = true;  // 同步更新数据
+        } else if (ckNum === 0 && unCkNum > 0) {  // 全不选
             $cb.prop('checked', false);
-            $cb.data('indeterminate', 'false');
-            $cb.next('.layui-form-checkbox').removeClass('layui-form-checked ew-form-indeterminate');
-            that.update($tr.data('id'), {LAY_CHECKED: false});  // 同步更新数据
+            $cb.removeClass('ew-form-indeterminate');
+            $cb.next('.layui-form-checkbox').removeClass('layui-form-checked');
+            d.LAY_CHECKED = false;  // 同步更新数据
         } else if (ckNum > 0 && unCkNum > 0) {  // 半选
             $cb.prop('checked', true);
             $cb.data('indeterminate', 'true');
-            $cb.next('.layui-form-checkbox').addClass('layui-form-checked ew-form-indeterminate');
-            that.update($tr.data('id'), {LAY_CHECKED: true});  // 同步更新数据
+            $cb.addClass('ew-form-indeterminate');
+            $cb.next('.layui-form-checkbox').addClass('layui-form-checked');
+            d.LAY_CHECKED = true;  // 同步更新数据
         }
     };
 
     /** 联动全选复选框 */
     TreeTable.prototype.checkChooseAllCB = function () {
+        var options = this.options;
         var components = this.getComponents();
-        var cbAllFilter = components.cbAllFilter;
-        var cbFilter = components.checkboxFilter;
-        var $tbody = components.$table.children('tbody');
         var ckNum = 0, unCkNum = 0;
-        $tbody.children('tr').each(function () {
-            var $cb = $(this).children('td').find('input[name="' + cbFilter + '"]');
-            if ($cb.prop('checked')) {
-                ckNum++;
-            } else {
-                unCkNum++;
+
+        function checkNum(data) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].LAY_CHECKED) ckNum++;
+                else unCkNum++;
+                if (data[i][options.tree.childName]) checkNum(data[i][options.tree.childName]);
             }
-        });
-        var $cb = $('input[lay-filter="' + cbAllFilter + '"]');
-        if (ckNum > 0 && unCkNum == 0) {  // 全选
+        }
+
+        checkNum(options.data);
+
+        var $cb = components.$view.find('input[lay-filter="' + components.chooseAllFilter + '"]');
+        if (ckNum > 0 && unCkNum === 0) {  // 全选
             $cb.prop('checked', true);
-            $cb.data('indeterminate', 'false');
+            $cb.removeClass('ew-form-indeterminate');
             $cb.next('.layui-form-checkbox').addClass('layui-form-checked');
-            $cb.next('.layui-form-checkbox').removeClass('ew-form-indeterminate');
-        } else if ((ckNum == 0 && unCkNum > 0) || (ckNum == 0 && unCkNum == 0)) {  // 全不选
+        } else if ((ckNum === 0 && unCkNum > 0) || (ckNum === 0 && unCkNum === 0)) {  // 全不选
             $cb.prop('checked', false);
-            $cb.data('indeterminate', 'false');
-            $cb.next('.layui-form-checkbox').removeClass('layui-form-checked ew-form-indeterminate');
+            $cb.removeClass('ew-form-indeterminate');
+            $cb.next('.layui-form-checkbox').removeClass('layui-form-checked');
         } else if (ckNum > 0 && unCkNum > 0) {  // 半选
             $cb.prop('checked', true);
-            $cb.data('indeterminate', 'true');
-            $cb.next('.layui-form-checkbox').addClass('layui-form-checked ew-form-indeterminate');
+            $cb.addClass('ew-form-indeterminate');
+            $cb.next('.layui-form-checkbox').addClass('layui-form-checked');
         }
     };
 
@@ -904,18 +912,6 @@ layui.define(['laytpl', 'form'], function (exports) {
     TreeTable.prototype.renderNumberCol = function () {
         this.getComponents().$tBody.children('tbody').children('tr').each(function (i) {
             $(this).children('td').find('.ew-tree-table-numbers').text(i + 1);
-        });
-    };
-
-    /* 解决form.render之后半选框被重置的问题 */
-    TreeTable.prototype.checkIndeterminateCB = function () {
-        var components = this.getComponents();
-        var cbFilter = components.checkboxFilter;
-        $('input[lay-filter="' + cbFilter + '"]').each(function () {
-            var $cb = $(this);
-            if ($cb.data('indeterminate') == 'true' && $cb.prop('checked')) {
-                $cb.next('.layui-form-checkbox').addClass('ew-form-indeterminate');
-            }
         });
     };
 
@@ -965,16 +961,31 @@ layui.define(['laytpl', 'form'], function (exports) {
         $trList.removeClass('ew-tree-table-filter-hide');
     };
 
+    /** 根据id获取tr的index */
+    TreeTable.prototype.getIndexById = function (id) {
+        var index = undefined, options = this.options;
+
+        function each(data) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i][options.idName] == id) return i;
+                if (!data[i][options.childName]) continue;
+                var ti = each(data[i].childName);
+                if (ti === undefined) continue;
+                if (index === undefined) index = ti;
+                else index = ti + '-' + index;
+            }
+        }
+
+        each(options.data);
+        return index;
+    };
+
     /** 展开指定行 */
     TreeTable.prototype.expand = function (id, cascade) {
         var components = this.getComponents();
-        var $tr = components.$table.children('tbody').children('tr[data-id="' + id + '"]');
-        if (!$tr.hasClass('ew-tree-table-open')) {
-            $tr.children('td').find('.ew-tree-pack').trigger('click');
-        }
-        if (cascade == false) {
-            return;
-        }
+        var $tr = components.$table.children('tbody').children('tr[data-index="' + this.getIndexById(id) + '"]');
+        if (!$tr.hasClass('ew-tree-table-open')) $tr.children('td').find('.ew-tree-pack').trigger('click');
+        if (cascade === false) return;
         // 联动父级
         var indent = parseInt($tr.data('indent'));
         $tr.prevAll('tr').each(function () {
@@ -991,13 +1002,9 @@ layui.define(['laytpl', 'form'], function (exports) {
     /** 折叠指定行 */
     TreeTable.prototype.fold = function (id, cascade) {
         var components = this.getComponents();
-        var $tr = components.$table.children('tbody').children('tr[data-id="' + id + '"]');
-        if ($tr.hasClass('ew-tree-table-open')) {
-            $tr.children('td').find('.ew-tree-pack').trigger('click');
-        }
-        if (cascade == false) {
-            return;
-        }
+        var $tr = components.$table.children('tbody').children('tr[data-index="' + this.getIndexById(id) + '"]');
+        if ($tr.hasClass('ew-tree-table-open')) $tr.children('td').find('.ew-tree-pack').trigger('click');
+        if (cascade === false) return;
         // 联动父级
         var indent = parseInt($tr.data('indent'));
         $tr.prevAll('tr').each(function () {
@@ -1013,21 +1020,15 @@ layui.define(['laytpl', 'form'], function (exports) {
 
     /** 全部展开 */
     TreeTable.prototype.expandAll = function () {
-        var that = this;
-        var components = this.getComponents();
-        var $trList = components.$table.children('tbody').children('tr');
-        $trList.each(function () {
-            that.expand($(this).data('id'), false);
+        this.getComponents().$table.children('tbody').children('tr').each(function () {
+            if (!$(this).hasClass('ew-tree-table-open')) $(this).children('td').find('.ew-tree-pack').trigger('click');
         });
     };
 
     /** 全部折叠 */
     TreeTable.prototype.foldAll = function () {
-        var that = this;
-        var components = this.getComponents();
-        var $trList = components.$table.children('tbody').children('tr');
-        $trList.each(function () {
-            that.fold($(this).data('id'), false);
+        this.getComponents().$table.children('tbody').children('tr').each(function () {
+            if ($(this).hasClass('ew-tree-table-open')) $(this).children('td').find('.ew-tree-pack').trigger('click');
         });
     };
 
@@ -1041,40 +1042,23 @@ layui.define(['laytpl', 'form'], function (exports) {
         tt.render($.extend(this.options, opt));
     };
 
-    /** 根据id更新数据 */
-    TreeTable.prototype.update = function (id, fields) {
-        var data = getDataById(this.getData(), id, this.options.tree);
-        $.extend(data, fields);
-    };
-
-    /** 根据id删除数据 */
-    TreeTable.prototype.del = function (id) {
-        delDataById(this.getData(), id, this.options.tree);
-    };
-
     /** 获取当前选中行 */
     TreeTable.prototype.checkStatus = function (needIndeterminate) {
-        (needIndeterminate == undefined) && (needIndeterminate = true);
+        if (needIndeterminate === undefined) needIndeterminate = true;
         var that = this;
         var components = this.getComponents();
-        var $table = components.$table;
-        var checkboxFilter = components.checkboxFilter;
-        var radioFilter = components.radioFilter;
         var list = [];
         // 获取单选框选中数据
-        var $radio = $table.find('input[name="' + radioFilter + '"]');
+        var $radio = components.$table.find('input[lay-filter="' + components.radioFilter + '"]');
         if ($radio.length > 0) {
-            var id = $radio.filter(':checked').val();
-            var d = getDataById(this.getData(), id, this.options.tree);
-            if (d) {
-                list.push(d);
-            }
+            var d = that.getDataByTr($radio.filter(':checked').parentsUntil('tr').last().parent());
+            if (d) list.push(d);
         } else {  // 获取复选框数据
-            $table.find('input[name="' + checkboxFilter + '"]:checked').each(function () {
+            components.$table.find('input[lay-filter="' + components.checkboxFilter + '"]:checked').each(function () {
                 var id = $(this).val();
-                var isIndeterminate = $(this).next('.layui-form-checkbox').hasClass('ew-form-indeterminate');
+                var isIndeterminate = $(this).hasClass('ew-form-indeterminate');
                 if (needIndeterminate || !isIndeterminate) {
-                    var d = getDataById(that.getData(), id, that.options.tree);
+                    var d = that.getDataByTr($(this).parentsUntil('tr').last().parent());
                     if (d) {
                         d.isIndeterminate = isIndeterminate;
                         list.push(d);
@@ -1087,27 +1071,28 @@ layui.define(['laytpl', 'form'], function (exports) {
 
     /** 设置复/单选框选中 */
     TreeTable.prototype.setChecked = function (ids) {
+        var that = this;
         var components = this.getComponents();
         var $table = components.$table;
         var checkboxFilter = components.checkboxFilter;
-        var radioFilter = components.radioFilter;
-        var $radio = $table.find('input[name="' + radioFilter + '"]');
+        var $radio = components.$table.find('input[lay-filter="' + components.radioFilter + '"]');
         if ($radio.length > 0) {  // 开启了单选框
             $radio.each(function () {
-                if (ids[ids.length - 1] == $(this).val()) {
+                var d = that.getDataByTr($(this).parentsUntil('tr').parent());
+                if (d && ids[ids.length - 1] == d[that.options.tree.idName]) {
                     $(this).next('.layui-form-radio').trigger('click');
                     return false;
                 }
             });
         } else {  // 开启了复选框
-            $table.find('input[name="' + checkboxFilter + '"]').each(function () {
+            components.$table.find('input[lay-filter="' + components.checkboxFilter + '"]').each(function () {
                 var $cb = $(this);
-                var value = $cb.val();
                 var $layCb = $cb.next('.layui-form-checkbox');
+                var indeterminate = $cb.hasClass('ew-form-indeterminate');
+                var d = that.getDataByTr($cb.parentsUntil('tr').parent());
                 for (var i = 0; i < ids.length; i++) {
-                    if (value == ids[i]) {
+                    if (d && ids[i] == d[that.options.tree.idName]) {
                         var checked = $cb.prop('checked');
-                        var indeterminate = $layCb.hasClass('ew-form-indeterminate');
                         if (!checked || indeterminate) {
                             $layCb.trigger('click');
                         }
@@ -1119,10 +1104,7 @@ layui.define(['laytpl', 'form'], function (exports) {
 
     /** 移除全部选中 */
     TreeTable.prototype.removeAllChecked = function () {
-        var components = this.getComponents();
-        var $table = components.$table;
-        var checkboxFilter = components.checkboxFilter;
-        this.checkSubCB($table.children('tbody'), false);
+        this.checkSubCB(this.getComponents().$table.children('tbody'), false);
     };
 
     /**
@@ -1158,104 +1140,11 @@ layui.define(['laytpl', 'form'], function (exports) {
         }
     };
 
-    /** 生成表头 */
-    function getThead(options) {
-        var htmlStr = '<tr>';
-        for (var i = 0; i < options.cols.length; i++) {
-            var col = options.cols[i];
-            htmlStr += '<td data-index="' + i + '" ';
-            col.align && (htmlStr += ' align="' + col.align + '"');  // 对齐方式
-            htmlStr += ' >';
-            if (col.singleLine && col.type != 'checkbox') {  // 单行显示
-                htmlStr += '<div class="ew-tree-table-td-single"><i class="layui-icon layui-icon-close ew-tree-tips-c"></i><div class="ew-tree-tips">';
-            }
-            // 标题
-            if (col.type == 'checkbox') {
-                htmlStr += options.getAllChooseBox();
-            } else {
-                htmlStr += (col.title || '');
-            }
-            // 列宽拖拽
-            if (!col.unresize && 'checkbox' != col.type && 'radio' != col.type && 'numbers' != col.type && 'space' != col.type) {
-                htmlStr += '<span class="ew-tb-resize"></span>';
-            }
-            if (col.singleLine) {  // 单行显示
-                htmlStr += '</div></div>';
-            }
-            htmlStr += '</td>';
-        }
-        htmlStr += '</tr>';
-        return htmlStr;
-    }
-
-    /** 生成colgroup */
-    function getColgroup(options) {
-        var htmlStr = '<colgroup>';
-        for (var i = 0; i < options.cols.length; i++) {
-            var col = options.cols[i];
-            htmlStr += '<col ';
-            // 设置宽度
-            if (col.width) {
-                htmlStr += 'width="' + col.width + '"'
-            } else if (col.type == 'space') {  // 空列
-                htmlStr += 'width="15"'
-            } else if (col.type == 'numbers') {  // 序号列
-                htmlStr += 'width="40"'
-            } else if (col.type == 'checkbox' || col.type == 'radio') {  // 复/单选框列
-                htmlStr += 'width="48"'
-            }
-            htmlStr += ' />';
-        }
-        htmlStr += '</colgroup>';
-        return htmlStr;
-    }
-
-    /** 计算table宽度 */
-    function getTbWidth(options) {
-        var minWidth = 0, setWidth = true;
-        for (var i = 0; i < options.cols.length; i++) {
-            var col = options.cols[i];
-            if (col.type == 'space') {  // 空列
-                minWidth += 15;
-            } else if (col.type == 'numbers') {  // 序号列
-                minWidth += 40;
-            } else if (col.type == 'checkbox' || col.type == 'radio') {  // 复/单选框列
-                minWidth += 48;
-            } else if (!col.width || /\d+%$/.test(col.width)) {  // 列未固定宽度
-                setWidth = false;
-                if (col.minWidth) {
-                    minWidth += col.minWidth;
-                } else if (options.cellMinWidth) {
-                    minWidth += options.cellMinWidth;
-                }
-            } else {  // 列固定宽度
-                minWidth += col.width;
-            }
-        }
-        return {minWidth: minWidth, setWidth: setWidth};
-    }
-
-    /** 生成全选按钮 */
-    function getAllChooseBox(options) {
-        var tbFilter = $(options.elem).next().attr('lay-filter');
-        var cbAllFilter = 'ew_tb_choose_all_' + tbFilter;
-        return '<input type="checkbox" lay-filter="' + cbAllFilter + '" lay-skin="primary" class="ew-tree-table-checkbox"/>';
-    }
-
-    /** 获取列图标 */
-    function getIcon(d, treeOption) {
-        if (getHaveChild(d, treeOption)) {
-            return '<i class="ew-tree-icon layui-icon layui-icon-layer"></i>';
-        } else {
-            return '<i class="ew-tree-icon layui-icon layui-icon-file"></i>';
-        }
-    }
-
     /** 折叠/展开行 */
     function toggleRow($tr) {
         var indent = parseInt($tr.data('indent'));
-        var isOpen = $tr.hasClass('ew-tree-table-open');
-        if (isOpen) {  // 折叠
+        var open = $tr.hasClass('ew-tree-table-open');
+        if (open) {  // 折叠
             $tr.removeClass('ew-tree-table-open');
             $tr.nextAll('tr').each(function () {
                 if (parseInt($(this).data('indent')) <= indent) {
@@ -1268,12 +1157,8 @@ layui.define(['laytpl', 'form'], function (exports) {
             var hideInd;
             $tr.nextAll('tr').each(function () {
                 var ind = parseInt($(this).data('indent'));
-                if (ind <= indent) {
-                    return false;
-                }
-                if (hideInd != undefined && ind > hideInd) {
-                    return true;
-                }
+                if (ind <= indent) return false;
+                if (hideInd !== undefined && ind > hideInd) return true;
                 $(this).removeClass('ew-tree-tb-hide');
                 if (!$(this).hasClass('ew-tree-table-open')) {
                     hideInd = parseInt($(this).data('indent'));
@@ -1282,7 +1167,7 @@ layui.define(['laytpl', 'form'], function (exports) {
                 }
             });
         }
-        updateFixedTbHead($tr.parent().parent().parent().parent().parent());
+        updateFixedTbHead($tr.parentsUntil('.ew-tree-table').last().parent());
     }
 
     /** 固定表头滚动条补丁 */
@@ -1301,8 +1186,8 @@ layui.define(['laytpl', 'form'], function (exports) {
     $(window).resize(function () {
         $('.ew-tree-table').each(function () {
             updateFixedTbHead($(this));
-            var $tbBox = $(this).children('.ew-tree-table-group').children('.ew-tree-table-box');
-            var full = $tbBox.attr('ew-tree-full');
+            var $tbBox = $(this).children('.ew-tree-table-box');
+            var full = $tbBox.data('full');
             if (full && device.ie && device.ie < 10) {
                 $tbBox.css('height', getPageHeight() - full);
             }
@@ -1367,18 +1252,6 @@ layui.define(['laytpl', 'form'], function (exports) {
         return haveChild;
     }
 
-    /** 补充pid字段 */
-    function addPidField(data, treeOption, parent) {
-        for (var i = 0; i < data.length; i++) {
-            if (parent) {
-                data[i][treeOption.pidName] = parent[treeOption.idName];
-            }
-            if (data[i][treeOption.childName] && data[i][treeOption.childName].length > 0) {
-                addPidField(data[i][treeOption.childName], treeOption, data[i]);
-            }
-        }
-    }
-
     /** 根据id获取数据 */
     function getDataById(data, id, treeOption) {
         for (var i = 0; i < data.length; i++) {
@@ -1389,22 +1262,6 @@ layui.define(['laytpl', 'form'], function (exports) {
                 var d = getDataById(data[i][treeOption.childName], id, treeOption);
                 if (d != undefined) {
                     return d;
-                }
-            }
-        }
-    }
-
-    /** 根据id删除数据 */
-    function delDataById(data, id, treeOption) {
-        for (var i = 0; i < data.length; i++) {
-            if (data[i][treeOption.idName] == id) {
-                data.splice(i, 1);
-                return true;
-            }
-            if (data[i][treeOption.childName] && data[i][treeOption.childName].length > 0) {
-                var rs = delDataById(data[i][treeOption.childName], id, treeOption);
-                if (rs) {
-                    return true;
                 }
             }
         }
@@ -1468,6 +1325,7 @@ layui.define(['laytpl', 'form'], function (exports) {
             if (!childName) childName = 'children';
             var newList = [];
             for (var i = 0; i < data.length; i++) {
+                if (data[i][idName] == data[i][pidName]) return console.error('第' + i + '条数据的' + idName + '与' + pidName + '相同', data[i]);
                 if (pId === undefined) pId = getPids(data, idName, pidName);
                 if (pidEquals(data[i][pidName], pId)) {
                     var children = this.pidToChildren(data, idName, pidName, childName, data[i][idName]);

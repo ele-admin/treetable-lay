@@ -252,14 +252,22 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
 }
 
 .ew-tree-table-checkbox + .layui-form-checkbox > .layui-icon {
-    color: transparent;
     transition: background-color .1s linear;
 }
 
-.ew-tree-table-checkbox + .layui-form-checkbox.layui-form-checked > .layui-icon {
-    color: #fff;
+/* checkbox半选状态 */
+.ew-form-indeterminate + .layui-form-checkbox .layui-icon:before {
+    content: "";
+    width: 10px;
+    height: 2px;
+    background-color: #f1f1f1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -1px 0 0 -5px;
 }
 
+/* radio列调整 */
 .ew-tree-table-radio + .layui-form-radio {
     padding: 0;
     height: 20px;
@@ -271,20 +279,6 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
     height: 20px;
     font-size: 20px;
     line-height: 20px;
-}
-
-/* checkbox半选状态 */
-.ew-tree-table .layui-form-checked.ew-form-indeterminate > .layui-icon:before {
-    content: "";
-    width: 9px;
-    height: 2px;
-    display: inline-block;
-    background-color: #fff;
-    vertical-align: middle;
-}
-
-.ew-tree-table .layui-form-checked.ew-form-indeterminate > .layui-icon {
-    line-height: 14px;
 }
 
 /* 单元格编辑 */
