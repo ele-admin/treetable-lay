@@ -22,20 +22,25 @@
         // 渲染表格
         var insTb = treeTable.render({
             elem: '#demoTb',
-            /*width: '200px',*/
+            width: '500px',
             height: '200px',
+            toolbar: 'default',
             tree: {
                 isPidData: true,
                 iconIndex: 2
             },
             cols: [
                 [
-                    {title: 'cc', colspan: 5}
+                    {title: 'cc', colspan: 9}
                 ],
                 [
                     {type: 'numbers', title: '#'},
                     {type: 'checkbox'},
-                    {field: 'id', title: 'ID'},
+                    {field: 'id', title: 'ID', width: 150},
+                    {field: 'name', title: 'name'},
+                    {field: 'sex', title: '创建时间'},
+                    {field: 'name', title: 'name'},
+                    {field: 'sex', title: '创建时间'},
                     {field: 'name', title: 'name'},
                     {field: 'sex', title: '创建时间'}
                 ]

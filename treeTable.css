@@ -31,7 +31,7 @@
 }
 
 /** 表格 */
-.ew-tree-table .layui-table td {
+.ew-tree-table .layui-table td, .ew-tree-table .layui-table th {
     border-top: none;
     border-left: none;
     padding: 0 !important;
@@ -43,6 +43,7 @@
 
 .ew-tree-table .ew-tree-table-head {
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 /** loading */
@@ -110,8 +111,8 @@ thead .ew-tree-table-cell.ew-tree-tips-open {
 
 .ew-tree-table-cell > .ew-tree-tips-c {
     position: absolute;
-    right: -10px;
-    top: -6px;
+    right: -6px;
+    top: -3px;
     width: 22px;
     height: 22px;
     line-height: 22px;
@@ -125,7 +126,7 @@ thead .ew-tree-table-cell.ew-tree-tips-open {
 }
 
 table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
-    top: 2px;
+    top: 0;
 }
 
 .ew-tree-table-cell.ew-tree-tips-open > .ew-tree-tips-c {
@@ -133,29 +134,28 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
 }
 
 .ew-tree-table-cell.ew-tree-tips-open.ew-show-left > .ew-tree-tips-c {
-    left: -10px;
+    left: -6px;
     right: auto;
 }
 
-.ew-tree-table-cell.single-line > div {
+.ew-tree-table-cell.single-line > .ew-tree-table-cell-content {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.ew-tree-table-cell.ew-tree-tips-open > div {
+.ew-tree-table-cell.ew-tree-tips-open > .ew-tree-table-cell-content {
     overflow: auto;
-    max-width: 280px;
-    max-height: 100px;
+    max-width: 220px;
+    max-height: 90px;
     min-height: 100%;
     width: max-content;
     white-space: normal;
     padding: 9px 15px;
 }
 
-.ew-tree-table td > .layui-table-grid-down {
-    bottom: 0;
-    height: auto;
+.ew-tree-table-cell > .layui-table-grid-down {
+    box-sizing: border-box;
 }
 
 /** 图标列 */
@@ -234,8 +234,11 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
 
 /** 特殊列调整 */
 .ew-tree-table td[data-type="numbers"] > .ew-tree-table-cell,
+.ew-tree-table th[data-type="numbers"] > .ew-tree-table-cell,
 .ew-tree-table td[data-type="checkbox"] > .ew-tree-table-cell,
-.ew-tree-table td[data-type="radio"] > .ew-tree-table-cell {
+.ew-tree-table th[data-type="checkbox"] > .ew-tree-table-cell,
+.ew-tree-table td[data-type="radio"] > .ew-tree-table-cell,
+.ew-tree-table th[data-type="radio"] > .ew-tree-table-cell {
     padding-left: 0;
     padding-right: 0;
 }
@@ -281,7 +284,7 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
     line-height: 20px;
 }
 
-/* 单元格编辑 */
+/** 单元格编辑 */
 .ew-tree-table .layui-table td[data-edit] {
     cursor: text;
 }
@@ -304,11 +307,55 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
     border-color: #FF5722 !important;
 }
 
-/* 搜索数据隐藏行 */
+/** 搜索数据隐藏行 */
 .ew-tree-table tr.ew-tree-table-filter-hide {
     display: none !important;
 }
 
+/** 头部工具栏 */
+.ew-tree-table .ew-tree-table-tool {
+    min-height: 50px;
+    line-height: 30px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.ew-tree-table .ew-tree-table-tool .ew-tree-table-tool-right {
+    float: right;
+}
+
+.ew-tree-table .ew-tree-table-tool .ew-tree-table-tool-item {
+    position: relative;
+    color: #333;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    margin-left: 10px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    vertical-align: middle;
+    -webkit-transition: .3s all;
+    transition: .3s all;
+    cursor: pointer;
+}
+
+.ew-tree-table .ew-tree-table-tool .ew-tree-table-tool-item:first-child {
+    margin-left: 0;
+}
+
+.ew-tree-table .ew-tree-table-tool .ew-tree-table-tool-item:hover {
+    border-color: #999;
+}
+
+.ew-tree-table .ew-tree-table-tool-right .layui-table-tool-panel {
+    left: auto;
+    right: -1px;
+    z-index: 9999;
+}
 
 /* 辅助样式 */
 .pd-tb-0 {
