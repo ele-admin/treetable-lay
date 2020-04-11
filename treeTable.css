@@ -357,6 +357,24 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
     z-index: 9999;
 }
 
+/* 列宽拖拽调整 */
+.ew-tree-table .ew-tb-resize {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    cursor: col-resize;
+}
+
+.ew-tree-table-resizing {
+    cursor: col-resize;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 /* 辅助样式 */
 .pd-tb-0 {
     padding-top: 0 !important;
@@ -366,16 +384,6 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
 .break-all {
     word-break: break-all !important;
 }
-
-/* 列宽拖拽调整 */
-/*.ew-tree-table .ew-tb-resize {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 10px;
-    cursor: col-resize;
-}*/
 
 
 /** 扩展图标 */
