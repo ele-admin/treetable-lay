@@ -7,7 +7,7 @@
     border-right: none;
 }
 
-.ew-tree-table:before, .ew-tree-table:after {
+.ew-tree-table:before, .ew-tree-table:after, .ew-tree-table .ew-tree-table-head:after {
     content: "";
     background-color: #e6e6e6;
     position: absolute;
@@ -18,9 +18,10 @@
 .ew-tree-table:before {
     width: 1px;
     top: 0;
+    z-index: 1;
 }
 
-.ew-tree-table:after {
+.ew-tree-table:after, .ew-tree-table .ew-tree-table-head:after {
     height: 1px;
     left: 0;
 }
@@ -39,11 +40,14 @@
 
 .ew-tree-table .ew-tree-table-box {
     overflow: auto;
+    position: relative;
 }
 
 .ew-tree-table .ew-tree-table-head {
     overflow: hidden;
     box-sizing: border-box;
+    background-color: #f2f2f2;
+    position: relative;
 }
 
 /** loading */
@@ -149,7 +153,10 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
     max-width: 220px;
     max-height: 90px;
     min-height: 100%;
+    width: 180px;
     width: max-content;
+    width: -moz-max-content;
+    width: -webkit-max-content;
     white-space: normal;
     padding: 9px 15px;
 }
@@ -238,7 +245,9 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
 .ew-tree-table td[data-type="checkbox"] > .ew-tree-table-cell,
 .ew-tree-table th[data-type="checkbox"] > .ew-tree-table-cell,
 .ew-tree-table td[data-type="radio"] > .ew-tree-table-cell,
-.ew-tree-table th[data-type="radio"] > .ew-tree-table-cell {
+.ew-tree-table th[data-type="radio"] > .ew-tree-table-cell,
+.ew-tree-table td[data-type="space"] > .ew-tree-table-cell,
+.ew-tree-table th[data-type="space"] > .ew-tree-table-cell {
     padding-left: 0;
     padding-right: 0;
 }
@@ -255,7 +264,14 @@ table tr:first-child .ew-tree-table-cell > .ew-tree-tips-c {
 }
 
 .ew-tree-table-checkbox + .layui-form-checkbox > .layui-icon {
+    font-weight: 600;
+    color: transparent;
     transition: background-color .1s linear;
+    -webkit-transition: background-color .1s linear;
+}
+
+.ew-tree-table-checkbox + .layui-form-checkbox.layui-form-checked > .layui-icon {
+    color: #fff;
 }
 
 /* checkbox半选状态 */

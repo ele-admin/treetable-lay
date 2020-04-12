@@ -69,7 +69,7 @@ layui.define(['laytpl', 'form'], function (exports) {
         rowspan: undefined,   // 单元格所占的行数
         templet: undefined,   // 自定义模板
         toolbar: undefined,   // 工具列
-        class: undefined,     // 单元格class
+        'class': undefined,     // 单元格class
         singleLine: undefined,// 是否一行显示
     };
 
@@ -518,8 +518,8 @@ layui.define(['laytpl', 'form'], function (exports) {
             var $this = $(this);
             var event = $this.attr('lay-event');
             if ('LAYTABLE_COLS' === event) that.toggleCol();
-            else if ('LAYTABLE_EXPORT' === event) that.export('show');
-            else if ('LAYTABLE_PRINT' === event) that.print();
+            else if ('LAYTABLE_EXPORT' === event) that.exportData('show');
+            else if ('LAYTABLE_PRINT' === event) that.printTable();
             else layui.event.call(this, MOD_NAME, 'toolbar(' + components.filter + ')', {event: event, elem: $this});
         });
 
@@ -527,13 +527,12 @@ layui.define(['laytpl', 'form'], function (exports) {
         components.$tBodyGroup.on('scroll', function () {
             var $this = $(this);
             components.$tHeadGroup.scrollLeft($this.scrollLeft());
-            // $headGroup.scrollTop($this.scrollTop());
         });
 
         // 导出数据
         components.$toolbar.off('click.export').on('click.export', '.layui-table-tool-panel>[data-type]', function () {
             var type = $(this).data('type');
-            if ('csv' === type || 'xls' === type) that.export(type);
+            if ('csv' === type || 'xls' === type) that.exportData(type);
         });
         components.$toolbar.off('click.panel').on('click.panel', '.layui-table-tool-panel', function (e) {
             layui.stope(e);
@@ -807,7 +806,7 @@ layui.define(['laytpl', 'form'], function (exports) {
         if (col.type) html += (' data-type="' + col.type + '"');
         if (col.key) html += (' data-key="' + col.key + '"');
         if (col.style) html += (' style="' + col.style + '"');
-        if (col.class) html += (' class="' + col.class + (col.hide ? ' layui-hide' : '') + '"');
+        if (col['class']) html += (' class="' + col['class'] + (col.hide ? ' layui-hide' : '') + '"');
         else if (col.hide) html += (' class="layui-hide"');
         html += ('>' + cell + '</td>');
         return html;
@@ -853,21 +852,26 @@ layui.define(['laytpl', 'form'], function (exports) {
 
     /** 重置表格尺寸 */
     TreeTable.prototype.resize = function (returnColgroup) {
-        // 设置表格最小宽度
+        // 计算表格宽度、最小宽度、百分比宽度
         var options = this.options;
         var components = this.getComponents();
-        var minWidth = 0, width = 0, needSetWidth = true;
+        var minWidth = 1, width = 1, needSetWidth = true, mwPercent = 0;
         this.eachCols(function (i, item) {
             if (item.colGroup || item.hide) return;
             if (item.width) {
-                width += (item.width + 2);
+                width += (item.width + 1);
                 if (item.minWidth) {
                     if (item.width < item.minWidth) item.width = item.minWidth;
                 } else if (item.width < options.cellMinWidth) item.width = options.cellMinWidth;
             } else needSetWidth = false;
-            if (item.width) minWidth += (item.width + 2);
-            else if (item.minWidth) minWidth += (item.minWidth + 2);
-            else minWidth += (options.cellMinWidth + 2);
+            if (item.width) minWidth += (item.width + 1);
+            else if (item.minWidth) {
+                minWidth += (item.minWidth + 1);
+                mwPercent += item.minWidth;
+            } else {
+                minWidth += (options.cellMinWidth + 1);
+                mwPercent += options.cellMinWidth;
+            }
         });
         if (minWidth) {
             components.$tHead.css('min-width', minWidth);
@@ -890,8 +894,8 @@ layui.define(['laytpl', 'form'], function (exports) {
             if (item.colGroup || item.hide) return;
             colgroupHtml.push('<col');
             if (item.width) colgroupHtml.push(' width="' + item.width + '"');
-            else if (item.minWidth) colgroupHtml.push(' width="' + (item.minWidth / minWidth * 100).toFixed(1) + '%"');
-            else colgroupHtml.push(' width="' + (options.cellMinWidth / minWidth * 100).toFixed(1) + '%"');
+            else if (item.minWidth) colgroupHtml.push(' width="' + (item.minWidth / mwPercent * 100).toFixed(2) + '%"');
+            else colgroupHtml.push(' width="' + (options.cellMinWidth / mwPercent * 100).toFixed(2) + '%"');
             if (item.type) colgroupHtml.push(' data-type="' + item.type + '"');
             if (item.key) colgroupHtml.push(' data-key="' + item.key + '"');
             colgroupHtml.push('/>');
@@ -1170,7 +1174,7 @@ layui.define(['laytpl', 'form'], function (exports) {
     };
 
     /** 导出 */
-    TreeTable.prototype.export = function (type) {
+    TreeTable.prototype.exportData = function (type) {
         var components = this.getComponents();
         if ('show' === type) {
             components.$toolbar.find('.layui-table-tool-panel').remove();
@@ -1210,7 +1214,7 @@ layui.define(['laytpl', 'form'], function (exports) {
     };
 
     /** 打印 */
-    TreeTable.prototype.print = function () {
+    TreeTable.prototype.printTable = function () {
         var components = this.getComponents();
         var head = components.$tHead.children('thead').html();
         if (!head) head = components.$tBody.children('thead').html();
@@ -1492,10 +1496,10 @@ layui.define(['laytpl', 'form'], function (exports) {
             $box = $cell.parents().filter('.ew-tree-table-head');
         }
         if ($box.length === 0) return;
-        if (($cell.outerWidth() + $cell.offset().left) > $box.offset().left + $box.outerWidth()) {
+        if (($cell.outerWidth() + $cell.offset().left) + 20 > $box.offset().left + $box.outerWidth()) {
             $cell.addClass('ew-show-left');
         }
-        if (($cell.outerHeight() + $cell.offset().top) > $box.offset().top + $box.outerHeight()) {
+        if (($cell.outerHeight() + $cell.offset().top + 10) > $box.offset().top + $box.outerHeight()) {
             $cell.addClass('ew-show-bottom');
         }
     });
@@ -1525,7 +1529,7 @@ layui.define(['laytpl', 'form'], function (exports) {
         var key = $this.parent().data('key');
         $this.data('x', e.clientX);
         var w = $this.parent().parent().parent().parent().children('colgroup').children('col[data-key="' + key + '"]').attr('width');
-        if (!w) w = $this.parent().outerWidth();
+        if (!w || w.toString().indexOf('%') !== -1) w = $this.parent().outerWidth();
         $this.data('width', w);
         $('body').addClass('ew-tree-table-resizing');
     }).on('mousemove', function (e) {
