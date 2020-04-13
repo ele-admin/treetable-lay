@@ -22,12 +22,20 @@
         // 渲染表格
         var insTb = treeTable.render({
             elem: '#demoTb',
-            width: '500px',
-            height: '200px',
+            /*width: '500px',*/
+            /*height: '200px',*/
             toolbar: 'default',
             tree: {
                 isPidData: true,
-                iconIndex: 2
+                iconIndex: 2,
+                arrowType: 'arrow2',
+                getIcon: function (d) {
+                    var haveChild = d[this.haveChildName];
+                    if (haveChild !== undefined) haveChild = haveChild === true || haveChild === 'true';
+                    else if (d[this.childName]) haveChild = d[this.childName].length > 0;
+                    if (haveChild) return '<i class="ew-tree-icon ew-tree-icon-folder"></i>';
+                    else return '<i class="ew-tree-icon ew-tree-icon-file"></i>';
+                }
             },
             cols: [
                 [
@@ -36,7 +44,7 @@
                 [
                     {type: 'numbers', title: '#', fixed: 'left'},
                     {type: 'checkbox', fixed: 'left'},
-                    {field: 'id', title: 'ID', minWidth: 250},
+                    {field: 'id', title: 'ID'/*, minWidth: 250*/},
                     {field: 'name', title: 'name', hide: true},
                     {field: 'sex', title: '创建时间', hide: true},
                     {field: 'name', title: 'name', hide: true},
