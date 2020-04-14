@@ -146,7 +146,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         if (this.options.url) {
             this.options.reqData = function (data, callback) {
                 if (!that.options.where) that.options.where = {};
-                that.options.where[that.options.request.pidName] = data[that.options.tree.idName];
+                if (data) that.options.where[that.options.request.pidName] = data[that.options.tree.idName];
                 (layui.admin && that.options.useAdmin ? layui.admin : $).ajax({
                     url: that.options.url,
                     data: that.options.contentType && that.options.contentType.indexOf('application/json') === 0 ? JSON.stringify(that.options.where) : that.options.where,
@@ -155,10 +155,11 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                     dataType: 'json',
                     contentType: that.options.contentType,
                     success: function (res) {
-                        callback(that.options.parseData ? that.options.parseData(res) : res);
+                        if (that.options.parseData) res = that.options.parseData(res);
+                        callback(res.data);
                     },
-                    error: function (xhr) {
-                        callback({code: xhr.status, msg: xhr.statusText, xhr: xhr});
+                    error: function () {
+                        callback();
                     }
                 });
             };
@@ -376,6 +377,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                     that.renderBodyTr(data, indent, undefined, $tr);
                     form.render(null, components.filter);  // 渲染表单元素
                     that.checkChooseAllCB();  // 联动全选框
+                    that.renderNumberCol();  // 渲染序号列
                 }
             };
             return $.extend(obj, ext);
@@ -1078,21 +1080,17 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
 
     /** 根据id获取tr的index */
     TreeTable.prototype.getIndexById = function (id) {
-        var index = undefined, options = this.options;
+        var options = this.options;
 
-        function each(data) {
+        function each(data, pi) {
             for (var i = 0; i < data.length; i++) {
-                if (data[i][options.idName] == id) return i;
-                if (!data[i][options.childName]) continue;
-                var ti = each(data[i].childName);
-                if (ti === undefined) continue;
-                if (index === undefined) index = ti;
-                else index = ti + '-' + index;
+                if (data[i][options.tree.idName] == id) return pi !== undefined ? pi + '-' + i : i;
+                if (data[i][options.tree.childName])
+                    return each(data[i][options.tree.childName], pi !== undefined ? pi + '-' + i : i);
             }
         }
 
-        each(options.data);
-        return index;
+        return each(options.data);
     };
 
     /** 展开指定行 */
@@ -1115,22 +1113,10 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     };
 
     /** 折叠指定行 */
-    TreeTable.prototype.fold = function (id, cascade) {
+    TreeTable.prototype.fold = function (id) {
         var components = this.getComponents();
         var $tr = components.$table.children('tbody').children('tr[data-index="' + this.getIndexById(id) + '"]');
         if ($tr.hasClass('ew-tree-table-open')) $tr.children('td').find('.ew-tree-pack').trigger('click');
-        if (cascade === false) return;
-        // 联动父级
-        var indent = parseInt($tr.data('indent'));
-        $tr.prevAll('tr').each(function () {
-            var tInd = parseInt($(this).data('indent'));
-            if (tInd < indent) {
-                if ($(this).hasClass('ew-tree-table-open')) {
-                    $(this).children('td').find('.ew-tree-pack').trigger('click');
-                }
-                indent = tInd;
-            }
-        });
     };
 
     /** 全部展开 */
@@ -1394,7 +1380,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     TreeTable.prototype.filterData = function (ids) {
         var components = this.getComponents();
         components.$loading.show();
-        if (this.data.length > 0) components.$loading.addClass('ew-loading-float');
+        if (this.options.data.length > 0) components.$loading.addClass('ew-loading-float');
         var $trList = components.$table.children('tbody').children('tr');
         var indexList = [];
         if (typeof ids === 'string') {  // 关键字
@@ -1414,7 +1400,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         }
         $trList.addClass('ew-tree-table-filter-hide');
         for (var j = 0; j < indexList.length; j++) {
-            var $tr = $trList.filter('[data-index="' + indexList[i] + '"]');
+            var $tr = $trList.filter('[data-index="' + indexList[j] + '"]');
             $tr.removeClass('ew-tree-table-filter-hide');
             // 联动父级
             var indent = parseInt($tr.data('indent'));

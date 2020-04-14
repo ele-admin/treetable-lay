@@ -2,66 +2,182 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <!--<meta http-equiv="refresh" content="0;URL=2.x/demo/index.html">-->
+    <title>Layui树形表格3.x演示</title>
     <link rel="stylesheet" href="layui/css/layui.css">
-    <link rel="stylesheet" href="../treeTable.css">
+    <link rel="stylesheet" href="css/demo.css">
 </head>
-<body>
-<div class="layui-container">
-    <table id="demoTb"></table>
+<body class="layui-hide">
+<div class="right-desc">
+    <div class="layui-text desc-item">
+        treeTable实现了layui数据表格的大部分功能，并且在用法上与几乎数据表格一致，
+        支持懒加载、复选框联动(半选)、拖拽列宽、固定表头等功能，
+        <a href="https://gitee.com/whvse/treetable-lay" target="_blank">码云下载</a>。
+    </div>
+    <div class="layui-text desc-item" style="padding: 0;overflow: hidden;">
+        <img src="https://s2.ax1x.com/2019/08/23/msiO78.png" width="100%"/>
+        <div style="padding: 5px 10px;">
+            EasyWeb管理系统模板
+            <a href="https://demo.easyweb.vip/iframe/" style="float: right;" target="_blank">前往查看</a>
+        </div>
+    </div>
 </div>
+<div class="page-wrapper">
+    <blockquote class="layui-elem-quote" style="margin: 15px 0;">Layui树形表格3.x演示</blockquote>
+    <div class="layui-btn-container" style="display: inline-block;">
+        <a href="async.html" class="layui-btn layui-btn-sm layui-btn-normal">
+            <i class="layui-icon">&#xe64d;</i>异步加载
+        </a>
+        <a href="icon.html" class="layui-btn layui-btn-sm layui-btn-normal">
+            <i class="layui-icon">&#xe639;</i>自定义图标
+        </a>
+        <a href="fixed.html" class="layui-btn layui-btn-sm layui-btn-normal">
+            <i class="layui-icon">&#xe62d;</i>固定表头
+        </a>
+        <a href="edit.html" class="layui-btn layui-btn-sm layui-btn-normal">
+            <i class="layui-icon">&#xe642;</i>单元格编辑
+        </a>
+        <a href="editAdv.html" class="layui-btn layui-btn-sm layui-btn-normal">
+            <i class="layui-icon">&#xe642;</i>单元格编辑扩展
+        </a>
+        <a href="big.html" class="layui-btn layui-btn-sm layui-btn-normal">
+            <i class="layui-icon">&#xe62c;</i>数据量测试
+        </a>
+        <a href="https://whvse.gitee.io/treetable/" class="layui-btn layui-btn-sm layui-btn-warm" target="_blank">
+            bom表格
+        </a>
+    </div>
+    <div class="layui-btn-container" style="display: inline-block;">
+        <button id="btnExpandAll" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe668;</i>展开全部
+        </button>
+        <button id="btnFoldAll" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe66b;</i>折叠全部
+        </button>
+        <button id="btnExpand" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe625;</i>展开用户管理
+        </button>
+        <button id="btnFold" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe623;</i>折叠用户管理
+        </button>
+        <button id="btnChecked" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe605;</i>勾选添加用户
+        </button>
+    </div>
+    <input class="layui-input" id="edtSearch" value="1_1_2" placeholder="输入关键字"
+           style="display: inline-block;width: 140px;height: 30px;line-height: 30px;padding: 0 5px;margin-right: 5px;"/>
+    <div class="layui-btn-container" style="display: inline-block;">
+        <button id="btnSearch" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe615;</i>搜索
+        </button>
+        <button id="btnClearSearch" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#x1006;</i>清除搜索
+        </button>
+    </div>
+    <table id="demoTreeTb"></table>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="tbBar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
 <script src="layui/layui.js"></script>
 <script>
     layui.config({
         base: '../'
-    }).use(['layer', 'treeTable'], function () {
+    }).use(['layer', 'util', 'treeTable'], function () {
         var $ = layui.jquery;
+        var layer = layui.layer;
+        var util = layui.util;
         var treeTable = layui.treeTable;
+        $('body').removeClass('layui-hide');
 
         // 渲染表格
         var insTb = treeTable.render({
-            elem: '#demoTb',
-            /*width: '500px',*/
-            /*height: '200px',*/
+            elem: '#demoTreeTb',
+            url: 'json/menus.json',
             toolbar: 'default',
+            height: 'full-280',
             tree: {
-                isPidData: true,
                 iconIndex: 2,
-                arrowType: 'arrow2',
-                getIcon: function (d) {
-                    var haveChild = d[this.haveChildName];
-                    if (haveChild !== undefined) haveChild = haveChild === true || haveChild === 'true';
-                    else if (d[this.childName]) haveChild = d[this.childName].length > 0;
-                    if (haveChild) return '<i class="ew-tree-icon ew-tree-icon-folder"></i>';
-                    else return '<i class="ew-tree-icon ew-tree-icon-file"></i>';
-                }
+                isPidData: true,
+                idName: 'authorityId',
+                pidName: 'parentId'
             },
-            cols: [
-                [
-                    {title: 'cc', colspan: 9}
-                ],
-                [
-                    {type: 'numbers', title: '#', fixed: 'left'},
-                    {type: 'checkbox', fixed: 'left'},
-                    {field: 'id', title: 'ID'/*, minWidth: 250*/},
-                    {field: 'name', title: 'name', hide: true},
-                    {field: 'sex', title: '创建时间', hide: true},
-                    {field: 'name', title: 'name', hide: true},
-                    {field: 'sex', title: '创建时间', hide: true},
-                    {field: 'name', title: 'name'},
-                    {field: 'sex', title: '创建时间'}
-                ]
-            ],
-            reqData: function (d, callback) {
-                $.get('json/data.json', function (res) {
-                    setTimeout(function () {
-                        callback(res.data);
-                    }, 1500);
+            cols: [[
+                {type: 'numbers'},
+                {type: 'checkbox'},
+                {field: 'authorityName', title: '菜单名称', minWidth: 165},
+                {
+                    title: '菜单图标', align: 'center', hide: true,
+                    templet: '<p><i class="layui-icon {{d.menuIcon}}"></i></p>'
+                },
+                {field: 'menuUrl', title: '菜单地址'},
+                {field: 'authority', title: '权限标识'},
+                {title: '类型', templet: '<p>{{d.isMenu?"菜单":"按钮"}}</p>', align: 'center', width: 60},
+                {
+                    title: '创建时间', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }
+                },
+                {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
+            ]],
+            parseData: function (res) {
+                $.each(res.data, function (i, d) {
+                    d.open = true;
                 });
+                return res;
+            },
+            style: 'margin-top:0;'
+        });
+
+        treeTable.on('tool(demoTreeTb)', function (obj) {
+            var event = obj.event;
+            if (event === 'del') {
+                layer.msg('删除成功');
+                obj.del();
+            } else if (event === 'edit') {
+                layer.msg('修改成功');
+                obj.update({authorityName: '新的名称'});
             }
         });
-        //console.log(insTb);
+
+        // 全部展开
+        $('#btnExpandAll').click(function () {
+            insTb.expandAll();
+        });
+
+        // 全部折叠
+        $('#btnFoldAll').click(function () {
+            insTb.foldAll();
+        });
+
+        $('#btnExpand').click(function () {
+            insTb.expand(2);
+        });
+
+        $('#btnFold').click(function () {
+            insTb.fold(2);
+        });
+
+        $('#btnChecked').click(function () {
+            insTb.expand(4);
+            insTb.setChecked([4]);
+        });
+
+        $('#btnSearch').click(function () {
+            var keywords = $('#edtSearch').val();
+            if (keywords) {
+                insTb.filterData(keywords);
+            } else {
+                insTb.clearFilter();
+            }
+        });
+
+        $('#btnClearSearch').click(function () {
+            insTb.clearFilter();
+        });
 
     });
 </script>

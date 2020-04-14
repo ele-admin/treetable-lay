@@ -249,6 +249,71 @@
       "updateTime": "2018/07/21 13:56:43",
       "isMenu": 1,
       "parentId": 18
+    },
+    {
+      "authorityId": 20,
+      "authorityName": "机构管理",
+      "orderNumber": 20,
+      "menuUrl": "system/org",
+      "menuIcon": null,
+      "createTime": "2018/06/29 11:05:41",
+      "authority": null,
+      "checked": 0,
+      "updateTime": "2018/06/29 11:05:41",
+      "isMenu": 1,
+      "parentId": 1
+    },
+    {
+      "authorityId": 21,
+      "authorityName": "查询机构",
+      "orderNumber": 21,
+      "menuUrl": "",
+      "menuIcon": "",
+      "createTime": "2018/07/21 13:56:43",
+      "authority": "org:view",
+      "checked": 0,
+      "updateTime": "2018/07/21 13:56:43",
+      "isMenu": 0,
+      "parentId": 20
+    },
+    {
+      "authorityId": 22,
+      "authorityName": "添加机构",
+      "orderNumber": 22,
+      "menuUrl": "",
+      "menuIcon": "",
+      "createTime": "2018/07/21 13:56:43",
+      "authority": "org:add",
+      "checked": 0,
+      "updateTime": "2018/07/21 13:56:43",
+      "isMenu": 0,
+      "parentId": 20
+    },
+    {
+      "authorityId": 23,
+      "authorityName": "修改机构",
+      "orderNumber": 23,
+      "menuUrl": "",
+      "menuIcon": "",
+      "createTime": "2018/07/21 13:56:43",
+      "authority": "org:update",
+      "checked": 0,
+      "updateTime": "2018/07/21 13:56:43",
+      "isMenu": 0,
+      "parentId": 20
+    },
+    {
+      "authorityId": 24,
+      "authorityName": "删除机构",
+      "orderNumber": 24,
+      "menuUrl": "",
+      "menuIcon": "",
+      "createTime": "2018/07/21 13:56:43",
+      "authority": "org:del",
+      "checked": 0,
+      "updateTime": "2018/07/21 13:56:43",
+      "isMenu": 0,
+      "parentId": 20
     }
   ]
 }
