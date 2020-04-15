@@ -86,103 +86,39 @@
 <script>
     layui.config({
         base: '../'
-    }).use(['layer', 'util', 'treeTable'], function () {
+    }).use(['layer', 'util', 'table'], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
         var util = layui.util;
-        var treeTable = layui.treeTable;
+        var table = layui.table;
         $('body').removeClass('layui-hide');
 
         // 渲染表格
-        var insTb = treeTable.render({
+        var insTb = table.render({
             elem: '#demoTreeTb',
             url: 'json/menus.json',
             toolbar: 'default',
             height: 'full-280',
-            tree: {
-                iconIndex: 2,
-                isPidData: true,
-                idName: 'authorityId',
-                pidName: 'parentId'
-            },
             cols: [
+                [{title:'xx',colspan:9}],
                 [
-                    {title: '只是想演示一个多级表头', colspan: 5},
-                    {title: '写这个插件伤脑细胞', colspan: 4}
-                ],
-                [
-                    {type: 'numbers'},
-                    {type: 'checkbox'},
-                    {field: 'authorityName', title: '菜单名称', minWidth: 165},
-                    {
-                        title: '菜单图标', align: 'center', hide: true,
-                        templet: '<p><i class="layui-icon {{d.menuIcon}}"></i></p>'
-                    },
-                    {field: 'menuUrl', title: '菜单地址'},
-                    {field: 'authority', title: '权限标识'},
-                    {title: '类型', templet: '<p>{{d.isMenu?"菜单":"按钮"}}</p>', align: 'center', width: 60},
-                    {
-                        title: '创建时间', templet: function (d) {
-                            return util.toDateString(d.createTime);
-                        }
-                    },
-                    {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
-                ]
-            ],
-            parseData: function (res) {
-                $.each(res.data, function (i, d) {
-                    d.open = true;
-                });
-                return res;
-            },
-            style: 'margin-top:0;'
-        });
-
-        treeTable.on('tool(demoTreeTb)', function (obj) {
-            var event = obj.event;
-            if (event === 'del') {
-                layer.msg('删除成功');
-                obj.del();
-            } else if (event === 'edit') {
-                layer.msg('修改成功');
-                obj.update({authorityName: '新的名称'});
-            }
-        });
-
-        // 全部展开
-        $('#btnExpandAll').click(function () {
-            insTb.expandAll();
-        });
-
-        // 全部折叠
-        $('#btnFoldAll').click(function () {
-            insTb.foldAll();
-        });
-
-        $('#btnExpand').click(function () {
-            insTb.expand(2);
-        });
-
-        $('#btnFold').click(function () {
-            insTb.fold(2);
-        });
-
-        $('#btnChecked').click(function () {
-            insTb.expand(4);
-            insTb.setChecked([4]);
-        });
-
-        $('#btnSearch').click(function () {
-            var keywords = $('#edtSearch').val();
-            if (keywords) {
-                insTb.filterData(keywords);
-            } else {
-                insTb.clearFilter();
-            }
-        });
-
-        $('#btnClearSearch').click(function () {
-            insTb.clearFilter();
+                {type: 'numbers'},
+                {type: 'checkbox'},
+                {field: 'authorityName', title: '菜单名称', minWidth: 165},
+                {
+                    title: '菜单图标', align: 'center', hide: true,
+                    templet: '<p><i class="layui-icon {{d.menuIcon}}"></i></p>'
+                },
+                {field: 'menuUrl', title: '菜单地址'},
+                {field: 'authority', title: '权限标识'},
+                {title: '类型', templet: '<p>{{d.isMenu?"菜单":"按钮"}}</p>', align: 'center', width: 60},
+                {
+                    title: '创建时间', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }
+                },
+                {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
+            ]]
         });
 
     });

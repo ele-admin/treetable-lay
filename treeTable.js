@@ -83,6 +83,30 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     /** 参数设置 */
     TreeTable.prototype.initOptions = function (opt) {
         var that = this;
+
+        // 处理特殊列
+        function initCol(item) {
+            if (!item.INIT_OK) item = $.extend({INIT_OK: true}, colDefaultOption, item);
+            // 特殊列处理
+            if (item.type === 'space') {  // 空列
+                if (!item.width) item.width = 15;
+                item.minWidth = item.width;
+            } else if (item.type === 'numbers') {  // 序号列
+                if (!item.width) item.width = 40;
+                item.minWidth = item.width;
+                if (!item.singleLine) item.singleLine = false;
+                if (!item.unresize) item.unresize = true;
+                if (!item.align) item.align = 'center';
+            } else if (item.type === 'checkbox' || item.type === 'radio') {  // 复/单选框列
+                if (!item.width) item.width = 48;
+                item.minWidth = item.width;
+                if (!item.singleLine) item.singleLine = false;
+                if (!item.unresize) item.unresize = true;
+                if (!item.align) item.align = 'center';
+            }
+            if (item.toolbar) item.type = 'tool';
+        }
+
         // 初始化列参数
         if ('Array' !== isClass(opt.cols[0])) opt.cols = [opt.cols];
         var colArrays = [], colIndex = 0;
@@ -94,25 +118,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                     item1.splice(i2, 1);
                     continue;
                 }
-                if (!item2.INIT_OK) item2 = $.extend({INIT_OK: true}, colDefaultOption, item2);
-                // 特殊列处理
-                if (item2.type === 'space') {  // 空列
-                    if (!item2.width) item2.width = 15;
-                    item2.minWidth = item2.width;
-                } else if (item2.type === 'numbers') {  // 序号列
-                    if (!item2.width) item2.width = 40;
-                    item2.minWidth = item2.width;
-                    if (!item2.singleLine) item2.singleLine = false;
-                    if (!item2.unresize) item2.unresize = true;
-                    if (!item2.align) item2.align = 'center';
-                } else if (item2.type === 'checkbox' || item2.type === 'radio') {  // 复/单选框列
-                    if (!item2.width) item2.width = 48;
-                    item2.minWidth = item2.width;
-                    if (!item2.singleLine) item2.singleLine = false;
-                    if (!item2.unresize) item2.unresize = true;
-                    if (!item2.align) item2.align = 'center';
-                }
-                if (item2.toolbar) item2.type = 'tool';
+                initCol(item2);
                 // 合并单元格处理
                 item2.key = i1 + '-' + i2;
                 var CHILD_COLS;
@@ -131,6 +137,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                         item22.HAS_PARENT = true;
                         item22.parentKey = i1 + '-' + i2;
                         item22.PARENT_COL_INDEX = colIndex;
+                        initCol(item22);
                         CHILD_COLS.push(item22);
                         childIndex = childIndex + parseInt(item22.colspan > 1 ? item22.colspan : 1);
                         opt.cols[i1 + 1][i22] = item22;
@@ -193,6 +200,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     /** 初始化表格 */
     TreeTable.prototype.init = function () {
         var options = this.options;
+        console.log(options)
         var $elem = $(options.elem);  // 原始表格
         var tbFilter = options.elem.substring(1);  // 表格的filter
         // 第一次生成树表格dom
@@ -271,7 +279,8 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             components.$tHead.html(colgroupHtml + headHtml);
             components.$tBody.html(colgroupHtml + '<tbody></tbody>');
             if (options.height.indexOf('full-') === 0) {  // 差值高度
-                var h = parseFloat(options.height.substring(5));
+                var h = parseFloat(options.height.substring(5)) + components.$toolbar.outerHeight()
+                    + components.$tHeadGroup.outerHeight() + 1;
                 components.$tBodyGroup.append([
                     '<style>[lay-filter="', tbFilter, '"] .ew-tree-table-box {',
                     '   height: ', getPageHeight() - h, 'px;',
@@ -294,9 +303,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 '<style>[lay-filter="', tbFilter, '"] .ew-tree-table-box:before {',
                 '   content: "";',
                 '   position: absolute;',
-                '   top: 0;',
-                '   left: 0;',
-                '   right: 0;',
+                '   top: 0; left: 0; right: 0;',
                 '   height: ' + (trH[options.size || 'md'] * options.cols.length) + 'px;',
                 '   background-color: #f2f2f2;',
                 '   border-bottom: 1px solid #e6e6e6;',
@@ -351,33 +358,52 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 tr: $tr,
                 data: data,
                 del: function () { // 删除行
+                    var index = $tr.data('index');
                     var indent = parseInt($tr.data('indent'));
+                    // 删除子级
                     $tr.nextAll('tr').each(function () {
                         if (parseInt($(this).data('indent')) <= indent) return false;
                         $(this).remove();
                     });
+                    // 更新后面同辈的index
+                    var indexLength = (typeof index === 'number' ? 1 : index.split('-').length);
+                    $tr.nextAll('tr').each(function () {
+                        var $this = $(this);
+                        if (parseInt($this.data('indent')) !== indent) return false;
+                        var _index = $this.data('index').split('-');
+                        _index[indexLength - 1] = parseInt(_index[indexLength - 1]) - 1;
+                        $this.data('index', _index.join('-'));
+                    });
+                    // 删除当前行
                     var $pTr = $tr.prevAll('tr');
+                    that.del(undefined, index);
                     $tr.remove();
-                    options.data.splice(index[0], 1);
-                    if (options.data.length === 0) components.$empty.show();
                     that.renderNumberCol();  // 渲染序号列
-                    // 联动父级
+                    // 联动父级多选框
                     $pTr.each(function () {
                         var tInd = parseInt($(this).data('indent'));
-                        if (tInd < indent) {
-                            that.checkParentCB($(this));
-                            indent = tInd;
-                        }
+                        if (tInd >= indent) return true;
+                        that.checkParentCB($(this));
+                        indent = tInd;
                     });
                     that.checkChooseAllCB();  // 联动全选框
+                    if (options.data.length === 0) components.$empty.show();
+                    updateFixedTbHead(components.$view);  // 更新滚动条补丁
                 },
                 update: function (fields) {  // 修改行
                     data = $.extend(data, fields);
                     var indent = parseInt($tr.data('indent'));
-                    that.renderBodyTr(data, indent, undefined, $tr);
+                    that.renderBodyTr(data, indent, undefined, $tr);  // 更新界面
                     form.render(null, components.filter);  // 渲染表单元素
-                    that.checkChooseAllCB();  // 联动全选框
                     that.renderNumberCol();  // 渲染序号列
+                    // 联动父级多选框
+                    $tr.prevAll('tr').each(function () {
+                        var tInd = parseInt($(this).data('indent'));
+                        if (tInd >= indent) return true;
+                        that.checkParentCB($(this));
+                        indent = tInd;
+                    });
+                    that.checkChooseAllCB();  // 联动全选框
                 }
             };
             return $.extend(obj, ext);
@@ -1240,7 +1266,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         var colgroup = components.$tBody.children('colgroup').html();
         // 隐藏特殊列
         var $colgroup = $('<colgroup>' + colgroup + '</colgroup>');
-        $colgroup.find('col[data-type="checkbox"],col[data-type="radio"],col[data-type="tool"]').attr('width', '1');
+        $colgroup.find('col[data-type="checkbox"],col[data-type="radio"],col[data-type="tool"]').attr('width', '0');
         // 生成打印内容
         var html = [
             '<table class="ew-tree-table-print">',
@@ -1418,11 +1444,15 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         components.$loading.hide();
         components.$loading.removeClass('ew-loading-float');
         if (indexList.length === 0) components.$empty.show();
+        updateFixedTbHead(components.$view);  // 更新滚动条补丁
     };
 
     /** 重置搜索 */
     TreeTable.prototype.clearFilter = function () {
-        this.getComponents().$table.children('tbody').children('tr').removeClass('ew-tree-table-filter-hide');
+        var components = this.getComponents();
+        components.$table.children('tbody').children('tr').removeClass('ew-tree-table-filter-hide');
+        if (this.options.data.length > 0) components.$empty.hide();
+        updateFixedTbHead(components.$view);  // 更新滚动条补丁
     };
 
     /**
@@ -1448,6 +1478,19 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         } else {  // 异步模式
             this.renderBodyAsync(d, $tr);
         }
+    };
+
+    /** 删除数据 */
+    TreeTable.prototype.del = function (id, index) {
+        if (index === undefined) index = this.getIndexById(id);
+        var indexList = (typeof index === 'number' ? [index] : index.split('-'));
+        var d = this.options.data;
+        if (indexList.length > 1) {
+            for (var i = 0; i < indexList.length - 1; i++) {
+                d = d[parseInt(indexList[i])][this.options.tree.childName];
+            }
+        }
+        d.splice(indexList[indexList.length - 1], 1);
     };
 
     /** 折叠/展开行 */
@@ -1595,9 +1638,8 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     /** 判断pId是否相等 */
     function pidEquals(pId, pIds) {
         if (isClass(pIds) === 'Array') {
-            for (var i = 0; i < pIds.length; i++) {
+            for (var i = 0; i < pIds.length; i++)
                 if (pId == pIds[i]) return true;
-            }
         }
         return pId == pIds;
     }
@@ -1629,7 +1671,8 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             if (!childName) childName = 'children';
             var newList = [];
             for (var i = 0; i < data.length; i++) {
-                if (data[i][idName] == data[i][pidName]) return console.error('第' + i + '条数据的' + idName + '与' + pidName + '相同', data[i]);
+                if (data[i][idName] == data[i][pidName])
+                    return console.error('第' + i + '条数据的' + idName + '与' + pidName + '相同', data[i]);
                 if (pId === undefined) pId = getPids(data, idName, pidName);
                 if (pidEquals(data[i][pidName], pId)) {
                     var children = this.pidToChildren(data, idName, pidName, childName, data[i][idName]);
