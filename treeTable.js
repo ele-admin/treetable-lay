@@ -785,9 +785,11 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         if (haveChild) html += (' data-have-child="' + haveChild + '"');
         html += (' data-index="' + d.LAY_INDEX + '"');
         html += (' data-indent="' + indent + '">');
+        var index = 0;
         this.eachCols(function (i, col) {
             if (col.colGroup) return;
-            html += that.renderBodyTd(d, indent, i, $tr ? $tr.children('td').eq(i) : undefined, col);
+            html += that.renderBodyTd(d, indent, index, $tr ? $tr.children('td').eq(i) : undefined, col);
+            index++;
         });
         html += '</tr>';
         return html;
