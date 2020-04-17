@@ -14,7 +14,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 0,
-      "parentId": -1
+      "parentId": -1,
+      "open": true
     },
     {
       "authorityId": 2,
@@ -27,7 +28,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 0,
-      "parentId": 1
+      "parentId": 1,
+      "open": true
     },
     {
       "authorityId": 3,
@@ -40,7 +42,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:54:16",
       "isMenu": 1,
-      "parentId": 2
+      "parentId": 2,
+      "open": true
     },
     {
       "authorityId": 4,
@@ -53,7 +56,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 1,
-      "parentId": 2
+      "parentId": 2,
+      "open": true
     },
     {
       "authorityId": 5,
@@ -66,7 +70,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 1,
-      "parentId": 2
+      "parentId": 2,
+      "open": true
     },
     {
       "authorityId": 6,
@@ -79,7 +84,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 1,
-      "parentId": 2
+      "parentId": 2,
+      "open": true
     },
     {
       "authorityId": 7,
@@ -92,7 +98,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 0,
-      "parentId": 1
+      "parentId": 1,
+      "open": true
     },
     {
       "authorityId": 8,
@@ -105,7 +112,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:54:58",
       "isMenu": 1,
-      "parentId": 7
+      "parentId": 7,
+      "open": true
     },
     {
       "authorityId": 9,
@@ -118,7 +126,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 1,
-      "parentId": 7
+      "parentId": 7,
+      "open": true
     },
     {
       "authorityId": 10,
@@ -131,7 +140,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 1,
-      "parentId": 7
+      "parentId": 7,
+      "open": true
     },
     {
       "authorityId": 11,
@@ -144,7 +154,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 1,
-      "parentId": 7
+      "parentId": 7,
+      "open": true
     },
     {
       "authorityId": 12,
@@ -157,7 +168,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 15:27:18",
       "isMenu": 1,
-      "parentId": 7
+      "parentId": 7,
+      "open": true
     },
     {
       "authorityId": 13,
@@ -170,7 +182,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 15:45:13",
       "isMenu": 0,
-      "parentId": 1
+      "parentId": 1,
+      "open": true
     },
     {
       "authorityId": 14,
@@ -183,7 +196,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:55:56",
       "isMenu": 1,
-      "parentId": 13
+      "parentId": 13,
+      "open": true
     },
     {
       "authorityId": 15,
@@ -196,7 +210,8 @@
       "checked": 0,
       "updateTime": "2018/06/29 11:05:41",
       "isMenu": 1,
-      "parentId": 13
+      "parentId": 13,
+      "open": true
     },
     {
       "authorityId": 16,
@@ -209,7 +224,8 @@
       "checked": 0,
       "updateTime": "2018/07/13 09:13:42",
       "isMenu": 1,
-      "parentId": 13
+      "parentId": 13,
+      "open": true
     },
     {
       "authorityId": 17,
@@ -222,7 +238,8 @@
       "checked": 0,
       "updateTime": "2018/06/29 11:05:41",
       "isMenu": 1,
-      "parentId": 13
+      "parentId": 13,
+      "open": true
     },
     {
       "authorityId": 18,
@@ -235,7 +252,8 @@
       "checked": 0,
       "updateTime": "2018/06/29 11:05:41",
       "isMenu": 0,
-      "parentId": 1
+      "parentId": 1,
+      "open": true
     },
     {
       "authorityId": 19,
@@ -248,7 +266,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:56:43",
       "isMenu": 1,
-      "parentId": 18
+      "parentId": 18,
+      "open": true
     },
     {
       "authorityId": 20,
@@ -261,7 +280,8 @@
       "checked": 0,
       "updateTime": "2018/06/29 11:05:41",
       "isMenu": 1,
-      "parentId": 1
+      "parentId": 1,
+      "open": true
     },
     {
       "authorityId": 21,
@@ -274,7 +294,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:56:43",
       "isMenu": 0,
-      "parentId": 20
+      "parentId": 20,
+      "open": true
     },
     {
       "authorityId": 22,
@@ -287,7 +308,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:56:43",
       "isMenu": 0,
-      "parentId": 20
+      "parentId": 20,
+      "open": true
     },
     {
       "authorityId": 23,
@@ -300,7 +322,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:56:43",
       "isMenu": 0,
-      "parentId": 20
+      "parentId": 20,
+      "open": true
     },
     {
       "authorityId": 24,
@@ -313,7 +336,8 @@
       "checked": 0,
       "updateTime": "2018/07/21 13:56:43",
       "isMenu": 0,
-      "parentId": 20
+      "parentId": 20,
+      "open": true
     }
   ]
 }

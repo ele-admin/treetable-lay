@@ -30,21 +30,18 @@
         <a href="icon.html" class="layui-btn layui-btn-sm layui-btn-normal">
             <i class="layui-icon">&#xe639;</i>自定义图标
         </a>
-        <a href="fixed.html" class="layui-btn layui-btn-sm layui-btn-normal">
-            <i class="layui-icon">&#xe62d;</i>固定表头
-        </a>
         <a href="edit.html" class="layui-btn layui-btn-sm layui-btn-normal">
             <i class="layui-icon">&#xe642;</i>单元格编辑
         </a>
         <a href="editAdv.html" class="layui-btn layui-btn-sm layui-btn-normal">
             <i class="layui-icon">&#xe642;</i>单元格编辑扩展
         </a>
-        <a href="big.html" class="layui-btn layui-btn-sm layui-btn-normal">
-            <i class="layui-icon">&#xe62c;</i>数据量测试
-        </a>
         <a href="https://whvse.gitee.io/treetable/" class="layui-btn layui-btn-sm layui-btn-warm" target="_blank">
             bom表格
         </a>
+        <button id="btnReload" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe669;</i>重载
+        </button>
     </div>
     <div class="layui-btn-container" style="display: inline-block;">
         <button id="btnExpandAll" class="layui-btn layui-btn-sm layui-btn-primary">
@@ -98,17 +95,22 @@
             elem: '#demoTreeTb',
             url: 'json/menus.json',
             toolbar: 'default',
-            height: 'full-280',
+            height: 'full-200',
             tree: {
                 iconIndex: 2,
                 isPidData: true,
                 idName: 'authorityId',
                 pidName: 'parentId'
             },
+            defaultToolbar: ['filter', 'print', 'exports', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
             cols: [
                 [
                     {title: '只是想演示一个多级表头', colspan: 5},
-                    {title: '写这个插件伤脑细胞', colspan: 4}
+                    {title: '这是一个二级表头', colspan: 4}
                 ],
                 [
                     {type: 'numbers'},
@@ -129,15 +131,10 @@
                     {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
                 ]
             ],
-            parseData: function (res) {
-                $.each(res.data, function (i, d) {
-                    d.open = true;
-                });
-                return res;
-            },
             style: 'margin-top:0;'
         });
 
+        // 工具列点击事件
         treeTable.on('tool(demoTreeTb)', function (obj) {
             var event = obj.event;
             if (event === 'del') {
@@ -146,6 +143,24 @@
             } else if (event === 'edit') {
                 layer.msg('修改成功');
                 obj.update({authorityName: '新的名称'});
+            }
+        });
+
+        // 头部工具栏点击事件
+        treeTable.on('toolbar(demoTreeTb)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    layer.msg('添加');
+                    break;
+                case 'delete':
+                    layer.msg('删除');
+                    break;
+                case 'update':
+                    layer.msg('编辑');
+                    break;
+                case 'LAYTABLE_TIPS':
+                    layer.msg('提示');
+                    break;
             }
         });
 
@@ -183,6 +198,10 @@
 
         $('#btnClearSearch').click(function () {
             insTb.clearFilter();
+        });
+
+        $('#btnReload').click(function () {
+            insTb.reload();
         });
 
     });

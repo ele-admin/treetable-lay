@@ -2,49 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Layui树形表格2.x演示</title>
+    <title>Layui树形表格</title>
     <link rel="stylesheet" href="layui/css/layui.css">
-    <link rel="stylesheet" href="demo.css?v=20191226">
+    <link rel="stylesheet" href="css/demo.css">
     <style>
-        thead td .layui-icon {
-            vertical-align: middle;
-        }
-
         [lay-date] {
-            background-image: url(icon_date.png);
+            background-image: url(css/icon_date.png);
             background-position: right center;
             background-repeat: no-repeat;
             padding-right: 28px;
             cursor: pointer;
         }
+
+        .layui-table td .layui-form-select .layui-input {
+            height: 28px;
+        }
     </style>
 </head>
-<body class="page-no-scroll">
-<div class="page-loading">
-    <div class="ball-loader sm">
-        <span></span><span></span><span></span><span></span>
-    </div>
-</div>
-
-<div class="page-wrapper">
-    <fieldset class="layui-elem-field layui-field-title">
-        <legend>Layui树形表格2.x演示</legend>
-    </fieldset>
-    <div class="layui-btn-container">
-        <a href="edit.html" class="layui-btn layui-btn-sm layui-btn-primary">
-            <i class="layui-icon">&#xe65c;</i>返回
-        </a>
-        <button class="layui-btn layui-btn-sm layui-btn-primary">演示复杂单元格编辑的实现</button>
-    </div>
-
-    <table id="demoTreeTable1"></table>
-</div>
-
-<!--<div class="right-desc">
+<body class="layui-hide">
+<div class="right-desc">
     <div class="layui-text desc-item">
-        treeTable时隔一年进行了彻底重构，不再基于数据表格table，从零开始，
-        实现了数据表格的大部分功能，在使用方法上与数据表格一致，
-        并且支持懒加载、复选框联动、折叠状态记忆等功能，
+        treeTable实现了layui数据表格的大部分功能，并且在用法上与几乎数据表格一致，
+        支持懒加载、复选框联动(半选)、拖拽列宽、固定表头等功能，
         <a href="https://gitee.com/whvse/treetable-lay" target="_blank">码云下载</a>。
     </div>
     <div class="layui-text desc-item" style="padding: 0;overflow: hidden;">
@@ -54,27 +33,36 @@
             <a href="https://demo.easyweb.vip/iframe/" style="float: right;" target="_blank">前往查看</a>
         </div>
     </div>
-</div>-->
+</div>
+<div class="page-wrapper">
+    <blockquote class="layui-elem-quote" style="margin: 15px 0;">Layui树形表格3.x演示</blockquote>
+    <div class="layui-btn-container">
+        <a href="edit.html" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe65c;</i>返回
+        </a>
+        <button class="layui-btn layui-btn-sm layui-btn-primary">演示复杂单元格编辑的实现</button>
+    </div>
+    <table id="demoTreeTb"></table>
+</div>
 
 <!-- 表格操作列 -->
-<script type="text/html" id="demoTreeTableBar1">
+<script type="text/html" id="tbBar">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
 <!-- 表格状态列 -->
-<script type="text/html" id="demoTreeTableState1">
+<script type="text/html" id="tbState">
     <input type="checkbox" lay-filter="ckState" value="{{d.id}}" lay-skin="switch"
            lay-text="正常|锁定" {{d.state==0?'checked':''}}/>
 </script>
 
 <!-- 表格下拉框列 -->
-<script type="text/html" id="demoTreeTableSel">
+<script type="text/html" id="tbSel">
     <select data-id="{{d.id}}" lay-filter="demoSel">
         <option value="">请选择</option>
-        <option value="0" {{d.state==0?'selected':''}}>研发部</option>
-        <option value="1" {{d.state==1?'selected':''}}>测试部</option>
-        <option value="2" {{d.state==2?'selected':''}}>市场部</option>
+        <option value="male" {{d.sex=='male'?'selected':''}}>男</option>
+        <option value="female" {{d.sex=='female'?'selected':''}}>女</option>
     </select>
 </script>
 
@@ -82,8 +70,6 @@
 <script>
     layui.config({
         base: '../'
-    }).extend({
-        treeTable: 'treeTable/treeTable'
     }).use(['layer', 'util', 'laydate', 'form', 'treeTable'], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
@@ -91,48 +77,35 @@
         var laydate = layui.laydate;
         var form = layui.form;
         var treeTable = layui.treeTable;
+        $('body').removeClass('layui-hide');
 
         // 渲染表格
         var insTb = treeTable.render({
-            elem: '#demoTreeTable1',
+            elem: '#demoTreeTb',
+            url: 'json/data.json',
+            toolbar: true,
             tree: {
-                iconIndex: 1
+                iconIndex: 2,
+                isPidData: true
             },
-            cols: [
+            cols: [[
                 {type: 'numbers'},
-                {field: 'id', title: 'ID'},
+                {type: 'checkbox'},
+                {field: 'id', title: 'ID', minWidth: 148},
+                {field: 'name', title: 'name<i class=\"layui-icon\">&#xe642;</i>', edit: 'text'},
+                {field: 'sex', title: 'sex', templet: '#tbSel', singleLine: false},
                 {
-                    field: 'name',
-                    title: 'name<i class="layui-icon">&#xe642;</i>',
-                    width: 160,
-                    edit: 'text',
-                    class: 'break-all'
-                },
-                {
-                    title: '创建时间', width: 180, templet: function (d) {
+                    title: '创建时间', templet: function (d) {
                         return '<div lay-date="' + d.id + '">' + util.toDateString(d.createTime, 'yyyy-MM-dd') + '</div>';
                     }
                 },
-                {templet: '#demoTreeTableSel', title: '部门', width: 140, singleLine: false, class: 'pd-tb-0'},
-                {templet: '#demoTreeTableState1', title: '状态', width: 100, class: 'pd-tb-0'},
-                {align: 'center', toolbar: '#demoTreeTableBar1', title: '操作', width: 120}
-            ],
-            reqData: function (data, callback) {
-                var url = '../../json/list';
-                url += ((data ? ('_' + data.id) : '') + '.json');
-                $.get(url, function (res) {
-                    callback(res.data);
-                    renderLayDate();  // 渲染laydate
-                });
+                {templet: '#tbState', title: '状态', width: 95},
+                {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
+            ]],
+            done: function () {
+                renderLayDate();
             },
             style: 'margin-top:0;'
-        });
-        $('#demoTreeTable1+div .ew-tree-table-box').css('overflow', 'visible');
-
-        // 监听单元格编辑事件
-        treeTable.on('edit(demoTreeTable1)', function (obj) {
-            console.log(obj);
-            layer.msg('修改了字段，当前行ID：' + obj.data.id);
         });
 
         // 渲染laydate
@@ -143,32 +116,41 @@
                     trigger: 'click',
                     done: function (value, date, endDate) {
                         var id = $(this.elem).attr('lay-date');
-                        layer.msg('日期' + value + '，当前行ID：' + id);
+                        insTb.update(id, {createTime: value});
                     }
                 });
             });
         }
 
+        // 监听单元格编辑事件
+        treeTable.on('edit(demoTreeTb)', function (obj) {
+            console.log(obj);
+        });
+
         // 监听select选择事件
         form.on('select(demoSel)', function (data) {
-            console.log(data.value); // 得到被选中的值
             var id = $(data.elem).data('id');
-            var title = $(data.elem).find('option[value="' + data.value + '"]').text();
-            layer.msg('选择了' + title + '，当前行ID：' + id);
+            insTb.update(id, {sex: data.value});
         });
 
         // 监听switch开关切换事件
         form.on('switch(ckState)', function (data) {
-            var checked = data.elem.checked;
-            var id = data.value;
-            layer.msg('switch' + (checked ? '开' : '关') + '，当前行ID：' + id);
+            insTb.update(data.value, {state: data.elem.checked ? 0 : 1});
         });
 
-        // 移除loading
-        setTimeout(function () {
-            $('body').children('.page-loading').hide();
-            $('body').removeClass('page-no-scroll');
-        }, 100);
+        // 工具列点击事件
+        treeTable.on('tool(demoTreeTb)', function (obj) {
+            var event = obj.event;
+            if (event === 'del') {
+                if (obj.data.children && obj.data.children.length > 0) return layer.msg('有子级不能删除');
+                obj.del();
+                layer.msg('删除成功');
+            } else if (event === 'edit') {
+                layer.msg('修改成功');
+                obj.update({name: '新的名称'});
+                renderLayDate();
+            }
+        });
 
     });
 </script>
