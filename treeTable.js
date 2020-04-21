@@ -136,7 +136,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 item2 = initCol(item2);
                 // 合并单元格处理
                 item2.key = i1 + '-' + i2;
-                var CHILD_COLS;
+                var CHILD_COLS = undefined;
                 if (item2.colGroup || item2.colspan > 1) {
                     item2.colGroup = true;
                     item2.type = 'group';
@@ -159,7 +159,8 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                         opt.cols[i1 + 1][i22] = item22;
                     }
                 }
-                if (!item2.PARENT_COL_INDEX) colArrays.push($.extend({CHILD_COLS: CHILD_COLS}, item2));
+                item2.CHILD_COLS = CHILD_COLS;
+                if (!item2.PARENT_COL_INDEX) colArrays.push(item2);
                 opt.cols[i1][i2] = item2;
             }
         }
@@ -225,6 +226,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     /** 初始化表格 */
     TreeTable.prototype.init = function () {
         var options = this.options;
+        console.log(options)
         var $elem = $(options.elem);  // 原始表格
         var tbFilter = options.elem.substring(1);  // 表格的filter
         // 第一次生成树表格dom
@@ -338,13 +340,18 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         form.render('checkbox', tbFilter);  // 渲染表头的表单元素
 
         // 默认隐藏列修正colspan
-        components.$table.children('thead').children('tr').children('th.layui-hide').each(function () {
-            var parentKey = $(this).data('parent'), pCol;
-            if (!parentKey) return true;
+        function patchHide($tr) {
+            var parentKey = $tr.data('parent'), pCol;
+            if (!parentKey) return;
             var $parent = components.$table.children('thead').children('tr').children('[data-key="' + parentKey + '"]');
             var colspan = $parent.attr('colspan') - 1;
             $parent.attr('colspan', colspan);
             if (colspan === 0) $parent.addClass('layui-hide');
+            patchHide($parent);
+        }
+
+        components.$table.children('thead').children('tr').children('th.layui-hide').each(function () {
+            patchHide($(this));
         });
 
         // 渲染数据
@@ -1419,23 +1426,25 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 var ks = key.split('-');
                 var col = this.options.cols[ks[0]][ks[1]];
                 col.hide = !show;
+
                 // 更新colspan数据
-                var parentKey = $th.data('parent'), pCol;
-                if (parentKey) {
+                function changeParent($temp) {
+                    var parentKey = $temp.data('parent'), pCol;
+                    if (!parentKey) return;
                     var $parent = components.$table.children('thead').children('tr').children('[data-key="' + parentKey + '"]');
                     var colspan = $parent.attr('colspan');
                     show ? colspan++ : colspan--;
                     $parent.attr('colspan', colspan);
                     if (colspan === 0) $parent.addClass('layui-hide');
                     else $parent.removeClass('layui-hide');
+                    changeParent($parent);
                 }
+
+                changeParent($th);
+
                 // 同步eachCols数据
                 this.eachCols(function (i, item) {
-                    if (item.key === key) {
-                        item.hide = col.hide;
-                    } else if (pCol && item.key === parentKey) {
-                        item.hide = pCol.hide;
-                    }
+                    if (item.key === key) item.hide = col.hide;
                 });
                 this.resize();  // 更新表格尺寸
             }

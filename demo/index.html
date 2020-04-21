@@ -110,7 +110,11 @@
             }],
             cols: [
                 [
-                    {title: '只是想演示一个多级表头', colspan: 5},
+                    {title: '只是想演示一个三级表头', colspan: 9},
+                ],
+                [
+                    {title: '只是想演示一个多级表头', colspan: 4},
+                    {field: 'menuUrl', title: '菜单地址', rowspan: 2},
                     {title: '这是一个二级表头', colspan: 4}
                 ],
                 [
@@ -121,7 +125,6 @@
                         title: '菜单图标', align: 'center', hide: true,
                         templet: '<p><i class="layui-icon {{d.menuIcon}}"></i></p>'
                     },
-                    {field: 'menuUrl', title: '菜单地址'},
                     {field: 'authority', title: '权限标识'},
                     {title: '类型', templet: '<p>{{d.isMenu?"菜单":"按钮"}}</p>', align: 'center', width: 60},
                     {
