@@ -857,6 +857,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             content = [
                 '<input type="radio"', d.LAY_CHECKED ? ' checked="checked"' : '',
                 ' lay-filter="', components.radioFilter, '"',
+                ' name="', components.radioFilter, '"',
                 ' class="ew-tree-table-radio" />'
             ].join('');
         } else if (col.templet) {  // 自定义模板
@@ -2052,6 +2053,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
 
         '/* radio列调整 */',
         '.ew-tree-table-radio + .layui-form-radio {',
+        '    margin: 0;',
         '    padding: 0;',
         '    height: 20px;',
         '    line-height: 20px;',
