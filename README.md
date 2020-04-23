@@ -1,11 +1,9 @@
 
-treeTable实现了layui数据表格的大部分功能，并且在用法上与几乎数据表格一致， 支持懒加载、复选框联动(半选)、拖拽列宽、固定表头等功能。
+树形表格treeTable实现了layui数据表格的大部分功能，并且在用法上与几乎数据表格一致， 支持懒加载、复选框联动(半选)、拖拽列宽、固定表头等功能。
 
 - 演示地址：[https://whvse.gitee.io/treetable-lay/demo/](https://whvse.gitee.io/treetable-lay/demo/index.html)
 
 - 开发文档：[https://gitee.com/whvse/treetable-lay/wikis/pages](https://gitee.com/whvse/treetable-lay/wikis/pages)
-
-<br/>
 
 ## 更新日志
 
@@ -47,14 +45,16 @@ treeTable实现了layui数据表格的大部分功能，并且在用法上与几
     - 基于数据表格table模板实现树形结构
     - 实现折叠/展开功能 
 
+> 小问题会抽时间解决，大升级时间会间隔较长，目前只有固定列未实现，分页和排序在树中不常见，懒加载可代替分页。
+
 <br/>
 
 ## 导入模块
 
-最新版只需要一个`treeTable.js`即可：
+最新版只需要一个`treeTable.js`即可，无需css：
 ```javascript
 layui.config({
-    base: '/'
+    base: '/'  // 配置模块所在的目录
 }).use(['treeTable'], function () {
     var treeTable = layui.treeTable;
 

@@ -5,6 +5,32 @@
     <title>Layui树形表格3.x演示</title>
     <link rel="stylesheet" href="layui/css/layui.css">
     <link rel="stylesheet" href="css/demo.css">
+    <style>
+        .demo-side {
+            position: relative;
+            transition: all .3s;
+        }
+
+        .demo-side.show {
+            padding-left: 120px;
+            position: relative;
+        }
+
+        .demo-side:before {
+            content: "假设这是侧边栏, treeTable使用了与layui数据表格完全不同的列宽分配方式, 由浏览器来分配, 所以当容器宽度变化后会自动适应, 对单页面系统非常友好";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -90px;
+            width: 105px;
+            visibility: hidden;
+            line-height: 1.5;
+        }
+
+        .demo-side.show:before {
+            visibility: visible;
+        }
+    </style>
 </head>
 <body class="layui-hide">
 <div class="right-desc">
@@ -43,6 +69,7 @@
             <i class="layui-icon">&#xe669;</i>重载
         </button>
         <button id="btnGetChecked" class="layui-btn layui-btn-sm layui-btn-primary">获取选中</button>
+        <button id="btnToggleSide" class="layui-btn layui-btn-sm layui-btn-primary">演示侧边栏</button>
     </div>
     <div class="layui-btn-container" style="display: inline-block;">
         <button id="btnExpandAll" class="layui-btn layui-btn-sm layui-btn-primary">
@@ -71,7 +98,9 @@
             <i class="layui-icon">&#x1006;</i>清除搜索
         </button>
     </div>
-    <table id="demoTreeTb"></table>
+    <div class="demo-side">
+        <table id="demoTreeTb"></table>
+    </div>
 </div>
 
 <!-- 表格操作列 -->
@@ -223,6 +252,11 @@
                     LAY_INDETERMINATE: d.LAY_INDETERMINATE
                 };
             }), null, 3) + '</pre>');
+        });
+
+        // 演示侧边栏
+        $('#btnToggleSide').click(function () {
+            $('.demo-side').toggleClass('show');
         });
 
     });
