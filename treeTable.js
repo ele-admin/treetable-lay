@@ -226,7 +226,6 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     /** 初始化表格 */
     TreeTable.prototype.init = function () {
         var options = this.options;
-        console.log(options)
         var $elem = $(options.elem);  // 原始表格
         var tbFilter = options.elem.substring(1);  // 表格的filter
         // 第一次生成树表格dom
@@ -420,7 +419,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                     updateFixedTbHead(components.$view);  // 更新滚动条补丁
                 },
                 update: function (fields) {  // 修改行
-                    data = $.extend(data, fields);
+                    data = $.extend(true, data, fields);
                     var indent = parseInt($tr.data('indent'));
                     that.renderBodyTr(data, indent, undefined, $tr);  // 更新界面
                     form.render(null, components.filter);  // 渲染表单元素
@@ -1207,7 +1206,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
 
     /** 重载表格 */
     TreeTable.prototype.reload = function (opt) {
-        this.initOptions(this.options ? $.extend(this.options, opt) : opt);
+        this.initOptions(this.options ? $.extend(true, this.options, opt) : opt);
         this.init();  // 初始化表格
         this.bindEvents();  // 绑定事件
     };
@@ -1312,18 +1311,25 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             '   <tbody>', body, '</tbody>',
             '</table>'
         ].join(''));
+
         // 隐藏特殊列
         $html.find('col[data-type="checkbox"],col[data-type="radio"],col[data-type="tool"]').remove();
         $html.find('td[data-type="checkbox"],td[data-type="radio"],td[data-type="tool"],.layui-hide').remove();
+
+        function hideCol($temp) {
+            var parentKey = $temp.data('parent'), pCol;
+            if (!parentKey) return;
+            var $parent = $html.children('thead').children('tr').children('[data-key="' + parentKey + '"]');
+            var colspan = parseInt($parent.attr('colspan')) - 1;
+            $parent.attr('colspan', colspan);
+            if (colspan === 0) $parent.remove();
+            hideCol($parent);
+        }
+
         $html.find('th[data-type="checkbox"],th[data-type="radio"],th[data-type="tool"]').each(function () {
-            var parentKey = $(this).data('parent');
-            if (parentKey) {
-                var $parent = $html.children('thead').children('tr').children('[data-key="' + parentKey + '"]');
-                var colspan = parseInt($parent.attr('colspan')) - 1;
-                $parent.attr('colspan', colspan);
-                if (colspan === 0) $parent.remove();
-            }
+            hideCol($(this));
         }).remove();
+
         // 打印内容样式
         var style = [
             '<style>',
@@ -1341,6 +1347,9 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             '      word-break: break-all;',
             '      border: 1px solid #888;',
             '      text-align: left;',
+            '   }',
+            '   .ew-tree-table-print .ew-tree-table-cell {',
+            '      min-height: 20px;',
             '   }',
             '   /* 序号列样式 */',
             '   .ew-tree-table-print td[data-type="numbers"], .ew-tree-table-print th[data-type="numbers"] {',
@@ -1559,7 +1568,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
 
     /** 更新数据 */
     TreeTable.prototype.update = function (id, fields) {
-        $.extend(this.getDataByTr(this.getIndexById(id)), fields);
+        $.extend(true, this.getDataByTr(this.getIndexById(id)), fields);
     };
 
     /** 折叠/展开行 */
