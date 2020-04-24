@@ -66,7 +66,10 @@
             bom表格
         </a>
         <button id="btnReload" class="layui-btn layui-btn-sm layui-btn-primary">
-            <i class="layui-icon">&#xe669;</i>重载
+            <i class="layui-icon">&#xe666;</i>重载
+        </button>
+        <button id="btnRefresh" class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe669;</i>刷新
         </button>
         <button id="btnGetChecked" class="layui-btn layui-btn-sm layui-btn-primary">获取选中</button>
         <button id="btnToggleSide" class="layui-btn layui-btn-sm layui-btn-primary">演示侧边栏</button>
@@ -241,6 +244,9 @@
         // 重载
         $('#btnReload').click(function () {
             insTb.reload();
+        });
+        $('#btnRefresh').click(function () {
+            insTb.refresh();
         });
 
         // 获取选中
