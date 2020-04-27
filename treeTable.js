@@ -35,7 +35,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             none: '无数据'                               // 空数据提示
         },
         reqData: undefined,                              // 自定义加载数据方法
-        useAdmin: true,                                  // 是否使用admin.ajax
+        useAdmin: false,                                  // 是否使用admin.ajax
         tree: {
             idName: 'id',                                // id的字段名
             pidName: 'pid',                              // pid的字段名
@@ -172,7 +172,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             this.options.reqData = function (data, callback) {
                 if (!that.options.where) that.options.where = {};
                 if (data) that.options.where[that.options.request.pidName] = data[that.options.tree.idName];
-                (layui.admin && that.options.useAdmin ? layui.admin : $).ajax({
+                (that.options.useAdmin ? layui.admin : $).ajax({
                     url: that.options.url,
                     data: that.options.contentType && that.options.contentType.indexOf('application/json') === 0 ? JSON.stringify(that.options.where) : that.options.where,
                     headers: that.options.headers,
@@ -567,7 +567,8 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                             $(this).focus();
                         } else {
                             d[field] = value;  // 同步更新数据
-                            that.renderBodyTd(d, indent, index, $td);  // 更新单元格
+                            var keys = $td.data('key').split('-');
+                            that.renderBodyTd(d, indent, index, $td, options.cols[keys[0]][keys[1]]);  // 更新单元格
                         }
                     });
                 } else {
@@ -756,14 +757,24 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             });
             // 移除loading
             $tr.removeClass('ew-tree-table-loading');
-            $tr.find('.ew-tree-pack').children('.ew-tree-table-arrow').removeClass('layui-anim layui-anim-rotate layui-anim-loop');
+            var $arrow = $tr.find('.ew-tree-pack').children('.ew-tree-table-arrow');
+            $arrow.removeClass('layui-anim layui-anim-rotate layui-anim-loop');
+            if (msg) {  // 加载失败
+                $tr.removeClass('ew-tree-table-open');
+            } else if (data && data.length === 0) {  // 无子集
+                d[options.tree.haveChildName] = false;
+                $tr.data('have-child', false);
+                $arrow.addClass('ew-tree-table-arrow-hide');
+                $arrow.next('.ew-tree-icon').after(options.tree.getIcon(d)).remove();
+            }
         } else {
             // 移除loading
             components.$loading.hide();
             components.$loading.removeClass('ew-loading-float');
             // 显示空视图
-            if (data && data.length > 0) components.$empty.hide();
-            else {
+            if (data && data.length > 0) {
+                components.$empty.hide();
+            } else {
                 components.$empty.show();
                 if (msg) components.$empty.text(msg);
                 else components.$empty.html(options.text.none);
@@ -945,7 +956,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 if (item2.hide) html.push(' class="layui-hide"');
                 html.push('>');
                 html.push('<div class="ew-tree-table-cell' + (item2.singleLine === undefined || item2.singleLine ? ' single-line' : '') + '"');
-                if (item2.align) html.push(' align="' + item2.align + '"');
+                if (item2.thAlign || item2.align) html.push(' align="' + (item2.thAlign || item2.align) + '"');
                 html.push('>');
                 html.push('<div class="ew-tree-table-cell-content">');
                 // 标题
@@ -1547,7 +1558,11 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         if (data) {  // 数据模式
             if (this.data.length > 0) components.$loading.addClass('ew-loading-float');
             components.$loading.show();
-            this.renderBodyData(data, d, $tr);
+            if (data.length > 0 && this.options.tree.isPidData) {  // pid形式数据
+                this.renderBodyData(tt.pidToChildren(data, this.options.tree.idName, this.options.tree.pidName, this.options.tree.childName), d, $tr);
+            } else {
+                this.renderBodyData(data, d, $tr);
+            }
         } else {  // 异步模式
             this.renderBodyAsync(d, $tr);
         }

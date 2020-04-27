@@ -61,7 +61,7 @@
                 {field: 'createTime', title: '创建时间'},
                 {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
             ]],
-            reqData: function (data, callback) {
+            reqData: function (data, callback) {  // 懒加载也可以用url方式，这里用reqData方式演示
                 setTimeout(function () {  // 故意延迟一下
                     var url = 'json/list';
                     url += ((data ? ('_' + data.id) : '') + '.json');

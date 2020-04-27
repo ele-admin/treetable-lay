@@ -7,6 +7,13 @@
 
 ## 更新日志
 
+- 2020-04-27
+    - 解决refresh方法data模式未转pid形式bug
+    - 解决单元格编辑报错bug
+    - 懒加载模式haveChild为true请求完无数据自动更新图标
+    - useAdmin参数默认改为false(默认不使用admin.ajax)
+    - 列参数增加thAlign配置表头的对齐方式
+
 - 2020-04-18 (v3.0)
     - 支持拖拽列宽、表头工具栏toolbar
     - 支持隐藏显示列、打印、导出

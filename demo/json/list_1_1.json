@@ -7,7 +7,7 @@
       "name": "xxx",
       "state": 0,
       "createTime": "2019/11/18 10:44:00",
-      "haveChild": false
+      "haveChild": true
     },
     {
       "id": "1_1_2",
