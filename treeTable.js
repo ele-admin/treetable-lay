@@ -1518,13 +1518,13 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             });
         }
         // 最后再检查一遍
-        $trList.not('.ew-tree-table-filter-hide').not('.ew-tree-tb-hide').each(function () {
+        /*$trList.not('.ew-tree-table-filter-hide').not('.ew-tree-tb-hide').each(function () {
             var index = $(this).data('index'), hide = true;
             for (var k = 0; k < indexList.length; k++) {
                 if (indexList[k] === index) hide = false;
             }
             if (hide) $(this).addClass('ew-tree-table-filter-hide');
-        });
+        });*/
         components.$loading.hide();
         components.$loading.removeClass('ew-loading-float');
         if (indexList.length === 0) components.$empty.show();
@@ -1717,9 +1717,9 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
     function getPids(data, idName, pidName) {
         var pids = [];
         for (var i = 0; i < data.length; i++) {
-            var hasPid;
+            var hasPid = false;
             for (var j = 0; j < data.length; j++) {
-                if (i !== j && data[j][idName] == data[i][pidName]) {
+                if (data[i][pidName] == data[j][idName]) {
                     hasPid = true;
                     break;
                 }
