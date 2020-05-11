@@ -1,4 +1,4 @@
-/** 树形表格3.x Created by wangfan on 2020-04-06 https://gitee.com/whvse/treetable-lay */
+/** 树形表格3.x Created by wangfan on 2020-05-11 https://gitee.com/whvse/treetable-lay */
 
 layui.define(['laytpl', 'form', 'util'], function (exports) {
     var $ = layui.jquery;
@@ -264,7 +264,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
             components.$toolbar.show();
             if (typeof options.toolbar === 'string') {
                 laytpl($(options.toolbar).html()).render({}, function (html) {
-                    components.$toolbar.html(html);
+                    components.$toolbar.html('<div style="display: inline-block;">' + html + '</div>');
                 });
             }
             var tbRights = ['<div class="ew-tree-table-tool-right">'];
@@ -894,7 +894,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 });
             }
         } else if (col.field && d[col.field] !== undefined && d[col.field] !== null) {  // 普通字段
-            content = util.escape(d[col.field] || '');
+            content = util.escape(d[col.field] === 0 ? '0' : d[col.field]);
         }
         // 图标列处理
         if (index === options.tree.iconIndex) {
