@@ -1,4 +1,4 @@
-/** 树形表格3.x Created by wangfan on 2020-05-11 https://gitee.com/whvse/treetable-lay */
+/** 树形表格3.x Created by wangfan on 2020-05-12 https://gitee.com/whvse/treetable-lay */
 
 layui.define(['laytpl', 'form', 'util'], function (exports) {
     var $ = layui.jquery;
@@ -21,7 +21,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
         parseData: undefined,                            // url模式处理请求数据
         request: {pidName: 'pid'},                       // url模式请求字段自定义
         toolbar: undefined,                              // 表头工具栏
-        defaultToolbar: ['filter', 'exports', 'print'],  // 表头工具栏右侧按钮
+        defaultToolbar: undefined,                       // 表头工具栏右侧按钮
         width: undefined,                                // 容器宽度
         height: undefined,                               // 容器高度
         cellMinWidth: 90,                                // 单元格最小宽度
@@ -209,6 +209,7 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 '</div>'
             ].join('');
         }
+        if (this.options.defaultToolbar === undefined) this.options.defaultToolbar = ['filter', 'exports', 'print'];
 
         // 自定义图标参数处理
         if (typeof this.options.tree.getIcon === 'string') {
@@ -279,10 +280,12 @@ layui.define(['laytpl', 'form', 'util'], function (exports) {
                 } else {
                     tbItem = options.defaultToolbar[i];
                 }
-                tbRights.push('<div class="ew-tree-table-tool-item"');
-                tbRights.push(' title="' + tbItem.title + '"');
-                tbRights.push(' lay-event="' + tbItem.layEvent + '">');
-                tbRights.push('<i class="layui-icon ' + tbItem.icon + '"></i></div>');
+                if (tbItem) {
+                    tbRights.push('<div class="ew-tree-table-tool-item"');
+                    tbRights.push(' title="' + tbItem.title + '"');
+                    tbRights.push(' lay-event="' + tbItem.layEvent + '">');
+                    tbRights.push('<i class="layui-icon ' + tbItem.icon + '"></i></div>');
+                }
             }
             components.$toolbar.append(tbRights.join('') + '</div>');
         }
